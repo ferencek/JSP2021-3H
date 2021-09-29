@@ -99,7 +99,7 @@ h_multiplicityN_higgs_candidates_boosted = ROOT.TH1F("h_multiplicityN_higgs_cand
 #     ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/GEN/TRSM_XToHY_6b_%s_GEN.root" % options.massPoint
 
 # single input file 
-ifile = "/data/TRSM_XToHY_6b_M3_2800_M2_700_GEN.root"
+ifile = "./data/TRSM_XToHY_6b_M3_2800_M2_700_GEN.root"
 
 # open input file
 events = Events(ifile)
