@@ -1,6 +1,7 @@
 from DataFormats.FWLite import Events, Handle
 from math import hypot
 import ROOT
+import sys
 
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat("nemruoi")
@@ -117,12 +118,18 @@ jetLabel= ("ak8GenJetsNoNu")
 if options.withNu:
     jetLabel = ("ak8GenJets")
 
+# for deleting previous printed line to have nice reportEvery 
+CURSOR_UP_ONE = '\x1b[1A' 
+ERASE_LINE = '\x1b[2K' 
+
 # loop over events
 for i,event in enumerate(events):
     if options.maxEvents > 0 and (i+1) > options.maxEvents :
         break
     if i % options.reportEvery == 0 :
-        print ('Event: %i' % (i+1) )
+	print('Event: %i' %(i+1))
+	sys.stdout.write(CURSOR_UP_ONE) 
+	sys.stdout.write(ERASE_LINE) 
     event.getByLabel(gpLabel, gpHandle)
     genparticles = gpHandle.product()
     event.getByLabel(jetLabel, jetHandle)
