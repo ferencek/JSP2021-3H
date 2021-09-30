@@ -50,12 +50,17 @@ def DeltaPhi(v1, v2, c = 3.141592653589793):
     return abs(r)
 
 
-# output histogram file
-histo_filename = "HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i.root" % (options.mX, options.mY)
-if options.massPoint:
-    histo_filename = "HISTOGRAMS_TRSM_XToHY_6b_%s.root" % options.massPoint
-if options.withNu:
-    histo_filename = histo_filename.replace(".root", "_WithNu.root")
+## output histogram file
+#histo_filename = "HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i.root" % (options.mX, options.mY)
+#
+#if options.massPoint:
+#    histo_filename = "HISTOGRAMS_TRSM_XToHY_6b_%s.root" % options.massPoint
+#if options.withNu:
+#    histo_filename = histo_filename.replace(".root", "_WithNu.root")
+
+
+# single output file
+histo_filename = "HISTOGRAMS_TRSM_XToHY_6b_M3_2800_M2_700.root"
 f = ROOT.TFile(histo_filename, "RECREATE")
 f.cd()
 
