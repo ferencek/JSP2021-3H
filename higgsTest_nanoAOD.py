@@ -49,7 +49,7 @@ def DeltaPhi(v1, v2, c = 3.141592653589793):
     return abs(r)
 
 # single input file for testing
-ifile = "/data/TRSM_XToHY_6b_M3_2800_M2_700_GEN_NANOAOD.root"
+ifile = "./data/TRSM_XToHY_6b_M3_2800_M2_700_NANOAOD.root"
 
 # open root input file directly 
 evtFile = ROOT.TFile.Open(ifile)
@@ -57,10 +57,12 @@ events  = evtFile.Get("Events")
 
 # loop over events 
 for i, event in enumerate(events):
-    genparticles = event.GenPart
-    jets         = event.GenJet
-
-    print(genparticles)
+    genParticles = event.GenPart_pdgId
+    nParticles   = event.nGenPart
+    #jets         = event.GenJet
+	
+    print(genparticles[i])
+    print(i)
     break
 
 
