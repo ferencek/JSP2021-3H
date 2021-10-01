@@ -1,5 +1,6 @@
-import ROOT
+from DataFormats.FWLite import Events, Handle
 from math import hypot
+import ROOT
 import sys
 
 ROOT.gROOT.SetBatch()
@@ -40,6 +41,7 @@ parser.add_option("--withNu", action="store_true",
 
 (options, args) = parser.parse_args()
 
+
 def DeltaPhi(v1, v2, c = 3.141592653589793):
     r = (v2 - v1) % (2.0 * c)
     if r < -c:
@@ -49,35 +51,41 @@ def DeltaPhi(v1, v2, c = 3.141592653589793):
     return abs(r)
 
 # single input file for testing
-ifile = "./data/TRSM_XToHY_6b_M3_2800_M2_700_NANOAOD.root"
+ifile = "./data/TRSM_XToHY_6b_M3_2800_M2_700_GEN.root"
 
-# open root input file directly 
-evtFile = ROOT.TFile.Open(ifile)
-events  = evtFile.Get("Events")
+# open input file
+events = Events(ifile)
 
-# loop over events 
-for i, event in enumerate(events):
+# define collections to process
+gpHandle = Handle ("std::vector<reco::GenParticle>")
+jetHandle = Handle ("std::vector<reco::GenJet>")
+gpLabel = ("genParticles")
+jetLabel= ("ak8GenJetsNoNu")
+if options.withNu:
+    jetLabel = ("ak8GenJets")
+
+# loop over events
+for i,event in enumerate(events): 
+    event.getByLabel(gpLabel, gpHandle)
+    genparticles = gpHandle.product()
+    event.getByLabel(jetLabel, jetHandle)
+    jets = jetHandle.product()
+
     noDaughters = 0
-    for n in range(event.nGenPart):
-	pdgId = event.GenPart_pdgId[n]
-	if not pdgId == 25:
-	    continue
-	hasHiggsDaughter = False
-	# loop over all particles and check if any of them have 
-	# the n-th particle as the mother, if yes then n-th particle
-	# has m-th partcile as her daughter
-	for m in range(event.nGenPart):
-	    if n == event.GenPart_genPartIdxMother[m]:
-		hasHiggsDaughter = True
-		break
-	if hasHiggsDaughter:
-	    noDaughters += 1 
+    higgsList=[]
+    higgscount=0
+    for gp in genparticles:
+        if not gp.pdgId()==25:
+            continue
+        hasHiggsDaughter = False
+        for d in range(gp.numberOfDaughters()):
+            if gp.daughter(d).pdgId()==25:
+                hasHiggsDaughter = True
+                break
+        if hasHiggsDaughter:
+	    noDaughters += 1
 	    continue
 
     break
 
 print(noDaughters)
-
-
-
-
