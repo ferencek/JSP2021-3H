@@ -1,5 +1,6 @@
 import ROOT
 from math import hypot
+import sys
 
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat("nemruoi")
@@ -54,6 +55,10 @@ if options.massPoint:
     histo_filename = "nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_%s.root" % options.massPoint
 if options.withNu:
     histo_filename = histo_filename.replace(".root", "_WithNu.root")
+
+# single output file for testing
+histo_filename = "nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_2800_M2_700.root"
+
 f = ROOT.TFile(histo_filename, "RECREATE")
 f.cd()
 
@@ -90,100 +95,99 @@ h_multiplicityN_higgs_candidates = ROOT.TH1F("h_multiplicityN_higgs_candidates",
 h_multiplicityN_higgs_candidates_boosted = ROOT.TH1F("h_multiplicityN_higgs_candidates_boosted", "h_multiplicityN_higgs_candidates_boosted", 5,-0.5,4.5)
 
 
-# # input file
-# ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/GEN/TRSM_XToHY_6b_M3_%i_M2_%i_GEN.root" % (options.mX, options.mY)
-# if options.massPoint:
-#     ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/GEN/TRSM_XToHY_6b_%s_GEN.root" % options.massPoint
+# input file
+ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/GEN/TRSM_XToHY_6b_M3_%i_M2_%i_GEN.root" % (options.mX, options.mY)
+if options.massPoint:
+    ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/GEN/TRSM_XToHY_6b_%s_GEN.root" % options.massPoint
 
-# single input file 
+# single input file for testing
 ifile = "/data/TRSM_XToHY_6b_M3_2800_M2_700_GEN_NANOAOD.root"
 
-# # open input file using framework lite BUT we will be using nanoaod file format and open root file directly
-# events = Events(ifile)
+# open root input file directly 
+evtFile = ROOT.TFile.Open(ifile)
+events  = evtFile.Get("Events")
 
-# # define collections to process
-# gpHandle = Handle ("std::vector<reco::GenParticle>")
-# jetHandle = Handle ("std::vector<reco::GenJet>")
-# gpLabel = ("genParticles")
-# jetLabel= ("ak8GenJetsNoNu")
-# if options.withNu:
-#     jetLabel = ("ak8GenJets")
+# for deleting previous printed line to have nice reportEvery 
+CURSOR_UP_ONE = '\x1b[1A' 
+ERASE_LINE = '\x1b[2K' 
 
-# # loop over events
-# for i,event in enumerate(events):
-#     if options.maxEvents > 0 and (i+1) > options.maxEvents :
-#         break
-#     if i % options.reportEvery == 0 :
-#         print ('Event: %i' % (i+1) )
-#     event.getByLabel(gpLabel, gpHandle)
-#     genparticles = gpHandle.product()
-#     event.getByLabel(jetLabel, jetHandle)
-#     jets = jetHandle.product()
+# loop over events
+for i,event in enumerate(events):
+    if options.maxEvents > 0 and (i+1) > options.maxEvents :
+        break
+    if i % options.reportEvery == 0:
+        print('Event: %i' %(i+1))
+        sys.stdout.write(CURSOR_UP_ONE) 
+        sys.stdout.write(ERASE_LINE) 
+    
+    genparticles = event.GenPart
+    jets         = event.GenJet # ak4 Jets made with visible genparticles
+    # jets         = event.FatJet # ak8 fat jets for boosted analysis
 
-#     higgsList=[]
-#     higgscount=0
-#     for gp in genparticles:
-#         if not gp.pdgId()==25:
-#             continue
-#         hasHiggsDaughter = False
-#         for d in range(gp.numberOfDaughters()):
-#             if gp.daughter(d).pdgId()==25:
-#                 hasHiggsDaughter = True
-#                 break
-#         if hasHiggsDaughter:
-#             continue
-#         h_higgs_pt_all.Fill(gp.pt())
-#         if abs(gp.eta()) < 2:
-#             h_higgsmass.Fill(gp.mass())
-#             h_higgsphi.Fill(gp.phi())
-#             h_higgseta.Fill(gp.eta())
-#             h_higgspt.Fill(gp.pt())
-#             higgsList.append(gp)
-#             d1=gp.daughter(0)
-#             d2=gp.daughter(1)
-#             dphi=DeltaPhi(d1.phi(), d2.phi())
-#             dy=abs(d1.rapidity()-d2.rapidity())
-#             DeltaR = hypot(dphi, dy)
-#             h_DeltaR_bb_vs_higgspt.Fill(gp.pt(),DeltaR)
-#             if DeltaR < 0.8:
-#                 higgscount +=1
+    higgsList=[]
+    higgscount=0
+    for gp in genparticles:
+        if not gp.pdgId ==25:
+            continue
+        hasHiggsDaughter = False
+        for d in range(gp.numberOfDaughters()):
+            if gp.daughter(d).pdgId()==25:
+                hasHiggsDaughter = True
+                break
+        if hasHiggsDaughter:
+            continue
+        h_higgs_pt_all.Fill(gp.pt())
+        if abs(gp.eta()) < 2:
+            h_higgsmass.Fill(gp.mass())
+            h_higgsphi.Fill(gp.phi())
+            h_higgseta.Fill(gp.eta())
+            h_higgspt.Fill(gp.pt())
+            higgsList.append(gp)
+            d1=gp.daughter(0)
+            d2=gp.daughter(1)
+            dphi=DeltaPhi(d1.phi(), d2.phi())
+            dy=abs(d1.rapidity()-d2.rapidity())
+            DeltaR = hypot(dphi, dy)
+            h_DeltaR_bb_vs_higgspt.Fill(gp.pt(),DeltaR)
+            if DeltaR < 0.8:
+                higgscount +=1
 
 
-#     higgs_candidatesList=[]
-#     for jet in jets:
-#         h_jetmass.Fill(jet.mass())
-#         h_jetphi.Fill(jet.phi())
-#         h_jeteta.Fill(jet.eta())
-#         h_jetpt.Fill(jet.pt())
-#         for h in higgsList:
-#             dphi=DeltaPhi(jet.phi(),h.phi())
-#             dy=abs(jet.rapidity() - h.rapidity())
-#             DeltaR=hypot(dy, dphi)
-#             if DeltaR < 0.2:
-#                 h_higgsmass_matched.Fill(h.mass())
-#                 h_higgsphi_matched.Fill(h.phi())
-#                 h_higgseta_matched.Fill(h.eta())
-#                 h_higgspt_matched.Fill(h.pt())
-#                 h_jetmass_matched.Fill(jet.mass())
-#                 h_jetphi_matched.Fill(jet.phi())
-#                 h_jeteta_matched.Fill(jet.eta())
-#                 h_jetpt_matched.Fill(jet.pt())
-#                 h_jet_pt_vs_higgs_pt.Fill(h.pt(),jet.pt())
-#                 h_jet_mass_vs_higgs_pt.Fill(h.pt(),jet.mass())
-#                 dphi1=DeltaPhi(jet.phi(), h.daughter(0).phi())
-#                 dy1=abs(jet.rapidity() - h.daughter(0).rapidity())
-#                 dphi2=DeltaPhi(jet.phi(), h.daughter(1).phi())
-#                 dy2=abs(jet.rapidity() - h.daughter(1).rapidity())
-#                 dR1=hypot(dy1, dphi1)
-#                 dR2=hypot(dy2, dphi2)
-#                 h_min_DR_vs_higgs_pt.Fill(h.pt(),min(dR1,dR2))
-#                 h_max_DR_vs_higgs_pt.Fill(h.pt(),max(dR1,dR2))
-#                 h_DeltaR_vs_higgs_pt.Fill(h.pt(),DeltaR)
-#         if (jet.pt() > 250 and abs(jet.eta()) < 2 and jet.mass() > 100 and jet.mass() < 150):
-#             higgs_candidatesList.append(jet)
+    higgs_candidatesList=[]
+    for jet in jets:
+        h_jetmass.Fill(jet.mass())
+        h_jetphi.Fill(jet.phi())
+        h_jeteta.Fill(jet.eta())
+        h_jetpt.Fill(jet.pt())
+        for h in higgsList:
+            dphi=DeltaPhi(jet.phi(),h.phi())
+            dy=abs(jet.rapidity() - h.rapidity())
+            DeltaR=hypot(dy, dphi)
+            if DeltaR < 0.2:
+                h_higgsmass_matched.Fill(h.mass())
+                h_higgsphi_matched.Fill(h.phi())
+                h_higgseta_matched.Fill(h.eta())
+                h_higgspt_matched.Fill(h.pt())
+                h_jetmass_matched.Fill(jet.mass())
+                h_jetphi_matched.Fill(jet.phi())
+                h_jeteta_matched.Fill(jet.eta())
+                h_jetpt_matched.Fill(jet.pt())
+                h_jet_pt_vs_higgs_pt.Fill(h.pt(),jet.pt())
+                h_jet_mass_vs_higgs_pt.Fill(h.pt(),jet.mass())
+                dphi1=DeltaPhi(jet.phi(), h.daughter(0).phi())
+                dy1=abs(jet.rapidity() - h.daughter(0).rapidity())
+                dphi2=DeltaPhi(jet.phi(), h.daughter(1).phi())
+                dy2=abs(jet.rapidity() - h.daughter(1).rapidity())
+                dR1=hypot(dy1, dphi1)
+                dR2=hypot(dy2, dphi2)
+                h_min_DR_vs_higgs_pt.Fill(h.pt(),min(dR1,dR2))
+                h_max_DR_vs_higgs_pt.Fill(h.pt(),max(dR1,dR2))
+                h_DeltaR_vs_higgs_pt.Fill(h.pt(),DeltaR)
+        if (jet.pt() > 250 and abs(jet.eta()) < 2 and jet.mass() > 100 and jet.mass() < 150):
+            higgs_candidatesList.append(jet)
 
-#     h_multiplicityN_higgs_candidates.Fill(len(higgs_candidatesList))
-#     h_multiplicityN_higgs_candidates_boosted.Fill(higgscount)
+    h_multiplicityN_higgs_candidates.Fill(len(higgs_candidatesList))
+    h_multiplicityN_higgs_candidates_boosted.Fill(higgscount)
     
 
 
