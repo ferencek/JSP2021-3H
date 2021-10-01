@@ -83,9 +83,8 @@ for i,event in enumerate(events):
                 hasHiggsDaughter = True
                 break
         if hasHiggsDaughter:
-	    noDaughters += 1
-	    continue
-
+			noDaughters += 1
+			continue
     break
 
 print(noDaughters)
