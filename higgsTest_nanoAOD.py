@@ -6,6 +6,9 @@ ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat("nemruoi")
 ROOT.gROOT.ForceStyle()
 
+from optparse import OptionParser
+parser = OptionParser()
+
 parser.add_option('--maxEvents', type='int', action='store',
                   default=-1,
                   dest='maxEvents',
