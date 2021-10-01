@@ -101,7 +101,7 @@ if options.massPoint:
     ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/GEN/TRSM_XToHY_6b_%s_GEN.root" % options.massPoint
 
 # single input file for testing
-ifile = "/data/TRSM_XToHY_6b_M3_2800_M2_700_GEN_NANOAOD.root"
+ifile = "./data/TRSM_XToHY_6b_M3_2800_M2_700_NANOAOD.root"
 
 # open root input file directly 
 evtFile = ROOT.TFile.Open(ifile)
@@ -119,15 +119,11 @@ for i,event in enumerate(events):
         print('Event: %i' %(i+1))
         sys.stdout.write(CURSOR_UP_ONE) 
         sys.stdout.write(ERASE_LINE) 
-    
-    genparticles = event.GenPart
-    jets         = event.GenJet # ak4 Jets made with visible genparticles
-    # jets         = event.FatJet # ak8 fat jets for boosted analysis
 
     higgsList=[]
     higgscount=0
-    for gp in genparticles:
-        if not gp.pdgId ==25:
+    for gp in event.GenPart_pdgId:
+        if not gp == 25:
             continue
         hasHiggsDaughter = False
         for d in range(gp.numberOfDaughters()):
