@@ -59,20 +59,20 @@ events  = evtFile.Get("Events")
 for i, event in enumerate(events):
     noDaughters = 0
     for n in range(event.nGenPart):
-		pdgId = event.GenPart_pdgId[n]
-		if not pdgId == 25:
-			continue
-		hasHiggsDaughter = False
+        pdgId = event.GenPart_pdgId[n]
+        if not pdgId == 25:
+            continue
+        hasHiggsDaughter = False
 		# loop over all particles and check if any of them have 
 		# the n-th particle as the mother, if yes then n-th particle
 		# has m-th partcile as her daughter
-		for m in range(event.nGenPart):
-			if n == event.GenPart_genPartIdxMother[m]:
-				hasHiggsDaughter = True
-				break
-		if hasHiggsDaughter: # at least one!
-			noDaughters += 1 
-			continue
+        for m in range(event.nGenPart):
+            if n == event.GenPart_genPartIdxMother[m]:
+                hasHiggsDaughter = True
+                break
+        if hasHiggsDaughter: # at least one!
+            noDaughters += 1 
+            continue
     break
 
 print(noDaughters)
