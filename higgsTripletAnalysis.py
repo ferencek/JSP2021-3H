@@ -121,14 +121,15 @@ if options.withNu:
 CURSOR_UP_ONE = '\x1b[1A' 
 ERASE_LINE = '\x1b[2K' 
 
+nDaughters = 0
 # loop over events
 for i,event in enumerate(events):
     if options.maxEvents > 0 and (i+1) > options.maxEvents :
         break
     if i % options.reportEvery == 0 :
-	    print('Event: %i' %(i+1))
-	    sys.stdout.write(CURSOR_UP_ONE) 
-	    sys.stdout.write(ERASE_LINE) 
+	print('Event: %i' %(i+1))
+	sys.stdout.write(CURSOR_UP_ONE) 
+	sys.stdout.write(ERASE_LINE) 
     event.getByLabel(gpLabel, gpHandle)
     genparticles = gpHandle.product()
     event.getByLabel(jetLabel, jetHandle)
@@ -145,6 +146,7 @@ for i,event in enumerate(events):
                 hasHiggsDaughter = True
                 break
         if hasHiggsDaughter:
+	    nDaughters += 1
             continue
         h_higgs_pt_all.Fill(gp.pt())
         if abs(gp.eta()) < 2:
@@ -200,6 +202,7 @@ for i,event in enumerate(events):
     h_multiplicityN_higgs_candidates_boosted.Fill(higgscount)
     
 
+print(nDaughters)
 
 f.Write()
 f.Close()

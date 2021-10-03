@@ -65,27 +65,27 @@ if options.withNu:
     jetLabel = ("ak8GenJets")
 
 # loop over events
-#for i,event in enumerate(events): 
-event = events[2]
+for i,event in enumerate(events): 
+	event.getByLabel(gpLabel, gpHandle)
+	genparticles = gpHandle.product()
+	event.getByLabel(jetLabel, jetHandle)
+	jets = jetHandle.product()
 
-event.getByLabel(gpLabel, gpHandle)
-genparticles = gpHandle.product()
-event.getByLabel(jetLabel, jetHandle)
-jets = jetHandle.product()
+	nDaughters = 0
+	higgsList=[]
+	higgscount=0
+	for gp in genparticles:
+		if not gp.pdgId()==25:
+		    continue
+		hasHiggsDaughter = False
+		for d in range(gp.numberOfDaughters()):
+		    if gp.daughter(d).pdgId()==25:
+		        hasHiggsDaughter = True
+		        break
+		if hasHiggsDaughter:
+		    nDaughters += 1
+		    continue
+	if i > 100:
+		break
 
-noDaughters = 0
-higgsList=[]
-higgscount=0
-for gp in genparticles:
-    if not gp.pdgId()==25:
-        continue
-    hasHiggsDaughter = False
-    for d in range(gp.numberOfDaughters()):
-        if gp.daughter(d).pdgId()==25:
-            hasHiggsDaughter = True
-            break
-    if hasHiggsDaughter:
-        noDaughters += 1
-        continue
-
-print(noDaughters)
+print(nDaughters)
