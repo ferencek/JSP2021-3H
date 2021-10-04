@@ -48,6 +48,35 @@ def DeltaPhi(v1, v2, c = 3.141592653589793):
         r -= 2.0 * c
     return abs(r)
 
+def findDaughters(n,partList):
+    # loop over list of particle indices and check if any of them have 
+    # the n-th particle as the mother, if yes then n-th particle
+    # has m-th partcile as her daughter
+
+    # return list of daughters' indicies 
+    dIndex = []
+    for m in partList:
+        if n == e.GenPart_genPartIdxMother[m]:
+            dIndex.append(m)
+
+    return dIndex
+
+    # d1 = False
+    # d2 = False
+    # for m in partList:
+    #     # no rapidity in nanoAOD only eta...
+    #     if n == e.GenPart_genPartIdxMother[m] and d1 == False:
+    #         d1_phi      = e.GenPart_phi[m]
+    #         d1_rapidity = e.GenPart_eta[m]
+    #         d1Index = m
+    #         d1      = True
+    #     if n == e.GenPart_genPartIdxMother[m] and d1 == True and d2 == False and m != d1Index:
+    #         d2_phi      = e.GenPart_phi[m]
+    #         d2_rapidity = e.GenPart_eta[m]
+    #         d2Index = m
+    #         d2      = True
+    # return d1_phi,d1_rapidity,d1Index,d2_phi,d2_rapidity,d2Index
+
 
 # output histogram file
 histo_filename = "nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i.root" % (options.mX, options.mY)
@@ -111,8 +140,9 @@ events  = evtFile.Get("Events")
 CURSOR_UP_ONE = '\x1b[1A' 
 ERASE_LINE = '\x1b[2K' 
 
+nDaughters = 0
 # loop over events
-for i,event in enumerate(events):
+for i,e in enumerate(events):
     if options.maxEvents > 0 and (i+1) > options.maxEvents :
         break
     if i % options.reportEvery == 0:
@@ -122,70 +152,83 @@ for i,event in enumerate(events):
 
     higgsList=[]
     higgscount=0
-    for gp in event.GenPart_pdgId:
-        if not gp == 25:
+
+    for n in range(e.nGenPart):
+        # list of all particle indices
+        allPart = [i for i in range(e.nGenPart)] 
+
+        if not e.GenPart_pdgId[n] == 25:
             continue
         hasHiggsDaughter = False
-        for d in range(gp.numberOfDaughters()):
-            if gp.daughter(d).pdgId()==25:
+        
+        dIndex = findDaughters(n,allPart)
+        for m in dIndex:
+            if e.GenPart_pdgId[m]==25:
                 hasHiggsDaughter = True
                 break
-        if hasHiggsDaughter:
+        if hasHiggsDaughter: # at least one!
+            nDaughters += 1
             continue
-        h_higgs_pt_all.Fill(gp.pt())
-        if abs(gp.eta()) < 2:
-            h_higgsmass.Fill(gp.mass())
-            h_higgsphi.Fill(gp.phi())
-            h_higgseta.Fill(gp.eta())
-            h_higgspt.Fill(gp.pt())
-            higgsList.append(gp)
-            d1=gp.daughter(0)
-            d2=gp.daughter(1)
-            dphi=DeltaPhi(d1.phi(), d2.phi())
-            dy=abs(d1.rapidity()-d2.rapidity())
+
+        h_higgs_pt_all.Fill(e.GenPart_pt[n])
+        if abs(e.GenPart_eta[n]) < 2:
+            h_higgsmass.Fill(e.GenPart_mass[n])
+            h_higgsphi.Fill(e.GenPart_phi[n])
+            h_higgseta.Fill(e.GenPart_eta[n])
+            h_higgspt.Fill(e.GenPart_pt[n])
+            higgsList.append(n)
+
+            dIndex = findDaughters(n,allPart)
+        
+            dphi=DeltaPhi(e.GenPart_phi[dIndex[0]], e.GenPart_phi[dIndex[1]])
+            # eta<->rapidity
+            dy=abs(e.GenPart_eta[dIndex[0]]-e.GenPart_eta[dIndex[1]])
             DeltaR = hypot(dphi, dy)
-            h_DeltaR_bb_vs_higgspt.Fill(gp.pt(),DeltaR)
+            h_DeltaR_bb_vs_higgspt.Fill(e.GenPart_pt[n],DeltaR)
             if DeltaR < 0.8:
                 higgscount +=1
 
-
+    # using GenJetAK8 - ak8 Jets made with visible genparticles
     higgs_candidatesList=[]
-    for jet in jets:
-        h_jetmass.Fill(jet.mass())
-        h_jetphi.Fill(jet.phi())
-        h_jeteta.Fill(jet.eta())
-        h_jetpt.Fill(jet.pt())
+    for j in range(e.nGenJetAK8):
+        h_jetmass.Fill(e.GenJetAK8_mass[j])
+        h_jetphi.Fill(e.GenJetAK8_phi[j])
+        h_jeteta.Fill(e.GenJetAK8_eta[j])
+        h_jetpt.Fill(e.GenJetAK8_pt[j])
         for h in higgsList:
-            dphi=DeltaPhi(jet.phi(),h.phi())
-            dy=abs(jet.rapidity() - h.rapidity())
+            dphi=DeltaPhi(e.GenJetAK8_phi[j],e.GenPart_phi[h])
+            # eta<->rapidity
+            dy=abs(e.GenJetAK8_eta[j] - e.GenPart_eta[h])
             DeltaR=hypot(dy, dphi)
             if DeltaR < 0.2:
-                h_higgsmass_matched.Fill(h.mass())
-                h_higgsphi_matched.Fill(h.phi())
-                h_higgseta_matched.Fill(h.eta())
-                h_higgspt_matched.Fill(h.pt())
-                h_jetmass_matched.Fill(jet.mass())
-                h_jetphi_matched.Fill(jet.phi())
-                h_jeteta_matched.Fill(jet.eta())
-                h_jetpt_matched.Fill(jet.pt())
-                h_jet_pt_vs_higgs_pt.Fill(h.pt(),jet.pt())
-                h_jet_mass_vs_higgs_pt.Fill(h.pt(),jet.mass())
-                dphi1=DeltaPhi(jet.phi(), h.daughter(0).phi())
-                dy1=abs(jet.rapidity() - h.daughter(0).rapidity())
-                dphi2=DeltaPhi(jet.phi(), h.daughter(1).phi())
-                dy2=abs(jet.rapidity() - h.daughter(1).rapidity())
+                h_higgsmass_matched.Fill(e.GenPart_mass[h])
+                h_higgsphi_matched.Fill(e.GenPart_phi[h])
+                h_higgseta_matched.Fill(e.GenPart_eta[h])
+                h_higgspt_matched.Fill(e.GenPart_pt[h])
+                h_jetmass_matched.Fill(e.GenJetAK8_mass[j])
+                h_jetphi_matched.Fill(e.GenJetAK8_phi[j])
+                h_jeteta_matched.Fill(e.GenJetAK8_eta[j])
+                h_jetpt_matched.Fill(e.GenJetAK8_pt[j])
+                h_jet_pt_vs_higgs_pt.Fill(e.GenPart_pt[h],e.GenJetAK8_pt[j])
+                h_jet_mass_vs_higgs_pt.Fill(e.GenPart_pt[h],e.GenJetAK8_mass[j])
+                dIndex = findDaughters(h,allPart)
+                dphi1=DeltaPhi(e.GenJetAK8_phi[j], e.GenPart_phi[dIndex[0]])
+                # eta<->rapidity
+                dy1=abs(e.GenJetAK8_eta[j] - e.GenPart_eta[dIndex[0]])
+                dphi2=DeltaPhi(e.GenJetAK8_phi[j], e.GenPart_phi[dIndex[1]])
+                dy2=abs(e.GenJetAK8_eta[j] - e.GenPart_eta[dIndex[1]])
                 dR1=hypot(dy1, dphi1)
                 dR2=hypot(dy2, dphi2)
-                h_min_DR_vs_higgs_pt.Fill(h.pt(),min(dR1,dR2))
-                h_max_DR_vs_higgs_pt.Fill(h.pt(),max(dR1,dR2))
-                h_DeltaR_vs_higgs_pt.Fill(h.pt(),DeltaR)
-        if (jet.pt() > 250 and abs(jet.eta()) < 2 and jet.mass() > 100 and jet.mass() < 150):
-            higgs_candidatesList.append(jet)
+                h_min_DR_vs_higgs_pt.Fill(e.GenPart_pt[h],min(dR1,dR2))
+                h_max_DR_vs_higgs_pt.Fill(e.GenPart_pt[h],max(dR1,dR2))
+                h_DeltaR_vs_higgs_pt.Fill(e.GenPart_pt[h],DeltaR)
+        if (e.GenJetAK8_pt[j] > 250 and abs(e.GenJetAK8_eta[j]) < 2 and e.GenJetAK8_mass[j] > 100 and e.GenJetAK8_mass[j] < 150):
+            higgs_candidatesList.append(j)
 
     h_multiplicityN_higgs_candidates.Fill(len(higgs_candidatesList))
     h_multiplicityN_higgs_candidates_boosted.Fill(higgscount)
     
-
+print(nDaughters)
 
 f.Write()
 f.Close()

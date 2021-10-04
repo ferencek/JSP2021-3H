@@ -127,9 +127,9 @@ for i,event in enumerate(events):
     if options.maxEvents > 0 and (i+1) > options.maxEvents :
         break
     if i % options.reportEvery == 0 :
-	print('Event: %i' %(i+1))
-	sys.stdout.write(CURSOR_UP_ONE) 
-	sys.stdout.write(ERASE_LINE) 
+        print('Event: %i' %(i+1))
+        sys.stdout.write(CURSOR_UP_ONE) 
+        sys.stdout.write(ERASE_LINE) 
     event.getByLabel(gpLabel, gpHandle)
     genparticles = gpHandle.product()
     event.getByLabel(jetLabel, jetHandle)
@@ -146,7 +146,7 @@ for i,event in enumerate(events):
                 hasHiggsDaughter = True
                 break
         if hasHiggsDaughter:
-	    nDaughters += 1
+            nDaughters += 1
             continue
         h_higgs_pt_all.Fill(gp.pt())
         if abs(gp.eta()) < 2:
@@ -155,6 +155,8 @@ for i,event in enumerate(events):
             h_higgseta.Fill(gp.eta())
             h_higgspt.Fill(gp.pt())
             higgsList.append(gp)
+            # why only two daughters? why the first two? 
+            # because they are candidates for H->bb ? so we treat them that way
             d1=gp.daughter(0)
             d2=gp.daughter(1)
             dphi=DeltaPhi(d1.phi(), d2.phi())

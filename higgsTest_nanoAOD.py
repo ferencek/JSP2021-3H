@@ -49,7 +49,7 @@ def DeltaPhi(v1, v2, c = 3.141592653589793):
     return abs(r)
 
 # single input file for testing
-ifile = "./data/TRSM_XToHY_6b_M3_2800_M2_700_NANOAOD.root"
+ifile = "./data/TRSM_XToHY_6b_M3_4000_M2_2300_NANOAOD.root"
 
 # open root input file directly 
 evtFile = ROOT.TFile.Open(ifile)
@@ -63,25 +63,25 @@ nDaughters = 0
 # loop over events 
 for i, event in enumerate(events):
     if options.maxEvents > 0 and (i+1) > options.maxEvents :
-	break
+        break
     if i % options.reportEvery == 0 :
-	print('Event: %i' %(i+1))
-	sys.stdout.write(CURSOR_UP_ONE) 
-	sys.stdout.write(ERASE_LINE) 
+        print('Event: %i' %(i+1))
+        sys.stdout.write(CURSOR_UP_ONE) 
+        sys.stdout.write(ERASE_LINE) 
+
     for n in range(event.nGenPart):
-        pdgId = event.GenPart_pdgId[n]
-        if not pdgId == 25:
+        if not event.GenPart_pdgId[n] == 25:
             continue
         hasHiggsDaughter = False
-	# loop over all particles and check if any of them have 
-	# the n-th particle as the mother, if yes then n-th particle
-	# has m-th partcile as her daughter
+    # loop over all particles and check if any of them have 
+    # the n-th particle as the mother, if yes then n-th particle
+    # has m-th partcile as her daughter
         for m in range(event.nGenPart):
             if n == event.GenPart_genPartIdxMother[m] and event.GenPart_pdgId[m]==25:
                 hasHiggsDaughter = True
                 break
         if hasHiggsDaughter: # at least one!
-            nDaughters += 1 
+            nDaughters += 1
             continue
 
 print(nDaughters)

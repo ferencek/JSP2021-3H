@@ -51,7 +51,7 @@ def DeltaPhi(v1, v2, c = 3.141592653589793):
     return abs(r)
 
 # single input file for testing
-ifile = "./data/TRSM_XToHY_6b_M3_2800_M2_700_GEN.root"
+ifile = "./data/TRSM_XToHY_6b_M3_4000_M2_2300_GEN.root"
 
 # open input file
 events = Events(ifile)
@@ -64,28 +64,38 @@ jetLabel= ("ak8GenJetsNoNu")
 if options.withNu:
     jetLabel = ("ak8GenJets")
 
+# for deleting previous printed line to have nice reportEvery 
+CURSOR_UP_ONE = '\x1b[1A' 
+ERASE_LINE = '\x1b[2K' 
+
 # loop over events
 for i,event in enumerate(events): 
-	event.getByLabel(gpLabel, gpHandle)
-	genparticles = gpHandle.product()
-	event.getByLabel(jetLabel, jetHandle)
-	jets = jetHandle.product()
+    event.getByLabel(gpLabel, gpHandle)
+    genparticles = gpHandle.product()
+    event.getByLabel(jetLabel, jetHandle)
+    jets = jetHandle.product()
+    
+    if options.maxEvents > 0 and (i+1) > options.maxEvents :
+        break
+    if i % options.reportEvery == 0 :
+        print('Event: %i' %(i+1))
+        sys.stdout.write(CURSOR_UP_ONE) 
+        sys.stdout.write(ERASE_LINE) 
+        
+    nDaughters = 0
+    higgsList=[]
+    higgscount=0
 
-	nDaughters = 0
-	higgsList=[]
-	higgscount=0
-	for gp in genparticles:
-		if not gp.pdgId()==25:
-		    continue
-		hasHiggsDaughter = False
-		for d in range(gp.numberOfDaughters()):
-		    if gp.daughter(d).pdgId()==25:
-		        hasHiggsDaughter = True
-		        break
-		if hasHiggsDaughter:
-		    nDaughters += 1
-		    continue
-	if i > 100:
-		break
+    for gp in genparticles:
+        if not gp.pdgId()==25:
+            continue
+        hasHiggsDaughter = False
+        for d in range(gp.numberOfDaughters()):
+            if gp.daughter(d).pdgId()==25:
+                hasHiggsDaughter = True
+                break
+        if hasHiggsDaughter:
+            nDaughters += 1
+            continue
 
 print(nDaughters)
