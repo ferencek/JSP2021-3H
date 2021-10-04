@@ -61,23 +61,6 @@ def findDaughters(n,partList):
 
     return dIndex
 
-    # d1 = False
-    # d2 = False
-    # for m in partList:
-    #     # no rapidity in nanoAOD only eta...
-    #     if n == e.GenPart_genPartIdxMother[m] and d1 == False:
-    #         d1_phi      = e.GenPart_phi[m]
-    #         d1_rapidity = e.GenPart_eta[m]
-    #         d1Index = m
-    #         d1      = True
-    #     if n == e.GenPart_genPartIdxMother[m] and d1 == True and d2 == False and m != d1Index:
-    #         d2_phi      = e.GenPart_phi[m]
-    #         d2_rapidity = e.GenPart_eta[m]
-    #         d2Index = m
-    #         d2      = True
-    # return d1_phi,d1_rapidity,d1Index,d2_phi,d2_rapidity,d2Index
-
-
 # output histogram file
 histo_filename = "nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i.root" % (options.mX, options.mY)
 if options.massPoint:

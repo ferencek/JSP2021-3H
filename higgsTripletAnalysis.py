@@ -156,7 +156,7 @@ for i,event in enumerate(events):
             h_higgspt.Fill(gp.pt())
             higgsList.append(gp)
             # why only two daughters? why the first two? 
-            # because they are candidates for H->bb ? so we treat them that way
+            # because they are candidates for H->bb ? 
             d1=gp.daughter(0)
             d2=gp.daughter(1)
             dphi=DeltaPhi(d1.phi(), d2.phi())
