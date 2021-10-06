@@ -136,6 +136,10 @@ for i,e in enumerate(events):
     higgsList=[]
     higgscount=0
 
+    # empty Lorentz4vector for calculating rapidity
+    partVec1 = ROOT.TLorentzVector()
+    partVec2 = ROOT.TLorentzVector()
+
     for n in range(e.nGenPart):
         # list of all particle indices
         allPart = [i for i in range(e.nGenPart)] 
@@ -154,6 +158,7 @@ for i,e in enumerate(events):
             continue
 
         h_higgs_pt_all.Fill(e.GenPart_pt[n])
+
         if abs(e.GenPart_eta[n]) < 2:
             h_higgsmass.Fill(e.GenPart_mass[n])
             h_higgsphi.Fill(e.GenPart_phi[n])
@@ -162,27 +167,39 @@ for i,e in enumerate(events):
             higgsList.append(n)
 
             dIndex = findDaughters(n,allPart)
-        
+
+            partVec1.SetPtEtaPhiM(e.GenPart_pt[dIndex[0]],e.GenPart_eta[dIndex[0]],e.GenPart_phi[dIndex[0]],e.GenPart_mass[dIndex[0]])
+            partVec2.SetPtEtaPhiM(e.GenPart_pt[dIndex[1]],e.GenPart_eta[dIndex[1]],e.GenPart_phi[dIndex[1]],e.GenPart_mass[dIndex[1]])
+            
             dphi=DeltaPhi(e.GenPart_phi[dIndex[0]], e.GenPart_phi[dIndex[1]])
-            # eta<->rapidity
-            dy=abs(e.GenPart_eta[dIndex[0]]-e.GenPart_eta[dIndex[1]])
+            dy=abs(partVec1.Rapidity()-partVec2.Rapidity())
             DeltaR = hypot(dphi, dy)
+
             h_DeltaR_bb_vs_higgspt.Fill(e.GenPart_pt[n],DeltaR)
             if DeltaR < 0.8:
                 higgscount +=1
 
     # using GenJetAK8 - ak8 Jets made with visible genparticles
     higgs_candidatesList=[]
+
+    # empty Lorentz4vector for calculating rapidity
+    jetVec = ROOT.TLorentzVector()
+    hVec   = ROOT.TLorentzVector()
+
     for j in range(e.nGenJetAK8):
         h_jetmass.Fill(e.GenJetAK8_mass[j])
         h_jetphi.Fill(e.GenJetAK8_phi[j])
         h_jeteta.Fill(e.GenJetAK8_eta[j])
         h_jetpt.Fill(e.GenJetAK8_pt[j])
-        for h in higgsList:
+
+        for h in higgsList:    
+            hVec.SetPtEtaPhiM(e.GenPart_pt[h],e.GenPart_eta[h],e.GenPart_phi[h],e.GenPart_mass[h])
+            jetVec.SetPtEtaPhiM(e.GenJetAK8_pt[j],e.GenJetAK8_eta[j],e.GenJetAK8_phi[j],e.GenJetAK8_mass[j])
+            
             dphi=DeltaPhi(e.GenJetAK8_phi[j],e.GenPart_phi[h])
-            # eta<->rapidity
-            dy=abs(e.GenJetAK8_eta[j] - e.GenPart_eta[h])
+            dy=abs(jetVec.Rapidity() - hVec.Rapidity())
             DeltaR=hypot(dy, dphi)
+
             if DeltaR < 0.2:
                 h_higgsmass_matched.Fill(e.GenPart_mass[h])
                 h_higgsphi_matched.Fill(e.GenPart_phi[h])
@@ -194,17 +211,23 @@ for i,e in enumerate(events):
                 h_jetpt_matched.Fill(e.GenJetAK8_pt[j])
                 h_jet_pt_vs_higgs_pt.Fill(e.GenPart_pt[h],e.GenJetAK8_pt[j])
                 h_jet_mass_vs_higgs_pt.Fill(e.GenPart_pt[h],e.GenJetAK8_mass[j])
+
                 dIndex = findDaughters(h,allPart)
+        
+                partVec1.SetPtEtaPhiM(e.GenPart_pt[dIndex[0]],e.GenPart_eta[dIndex[0]],e.GenPart_phi[dIndex[0]],e.GenPart_mass[dIndex[0]])
+                partVec2.SetPtEtaPhiM(e.GenPart_pt[dIndex[1]],e.GenPart_eta[dIndex[1]],e.GenPart_phi[dIndex[1]],e.GenPart_mass[dIndex[1]])
+            
                 dphi1=DeltaPhi(e.GenJetAK8_phi[j], e.GenPart_phi[dIndex[0]])
-                # eta<->rapidity
-                dy1=abs(e.GenJetAK8_eta[j] - e.GenPart_eta[dIndex[0]])
+                dy1=abs(jetVec.Rapidity() - partVec1.Rapidity())
                 dphi2=DeltaPhi(e.GenJetAK8_phi[j], e.GenPart_phi[dIndex[1]])
-                dy2=abs(e.GenJetAK8_eta[j] - e.GenPart_eta[dIndex[1]])
+                dy2=abs(jetVec.Rapidity() - partVec2.Rapidity())
+
                 dR1=hypot(dy1, dphi1)
                 dR2=hypot(dy2, dphi2)
                 h_min_DR_vs_higgs_pt.Fill(e.GenPart_pt[h],min(dR1,dR2))
                 h_max_DR_vs_higgs_pt.Fill(e.GenPart_pt[h],max(dR1,dR2))
                 h_DeltaR_vs_higgs_pt.Fill(e.GenPart_pt[h],DeltaR)
+
         if (e.GenJetAK8_pt[j] > 250 and abs(e.GenJetAK8_eta[j]) < 2 and e.GenJetAK8_mass[j] > 100 and e.GenJetAK8_mass[j] < 150):
             higgs_candidatesList.append(j)
 

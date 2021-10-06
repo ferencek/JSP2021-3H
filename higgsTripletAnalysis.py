@@ -177,7 +177,7 @@ for i,event in enumerate(events):
     higgs_candidatesList=[]
     for jet in jets:
         # slimmed jets
-        if jet.pt()<=100:
+        if jet.pt()<options.slim:
             continue
 
         h_jetmass.Fill(jet.mass())
