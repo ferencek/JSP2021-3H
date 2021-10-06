@@ -62,14 +62,14 @@ def findDaughters(n,partList):
     return dIndex
 
 # output histogram file
-histo_filename = "nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i.root" % (options.mX, options.mY)
+histo_filename = "./hist/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i.root" % (options.mX, options.mY)
 if options.massPoint:
-    histo_filename = "nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_%s.root" % options.massPoint
+    histo_filename = "./hist/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_%s.root" % options.massPoint
 if options.withNu:
     histo_filename = histo_filename.replace(".root", "_WithNu.root")
 
-# single output file for testing
-histo_filename = "nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_2800_M2_700.root"
+# # single output file for testing
+# histo_filename = "nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_2800_M2_700.root"
 
 f = ROOT.TFile(histo_filename, "RECREATE")
 f.cd()
@@ -108,12 +108,12 @@ h_multiplicityN_higgs_candidates_boosted = ROOT.TH1F("h_multiplicityN_higgs_cand
 
 
 # input file
-ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/GEN/TRSM_XToHY_6b_M3_%i_M2_%i_GEN.root" % (options.mX, options.mY)
+ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/NANOAOD/TRSM_XToHY_6b_M3_%i_M2_%i_NANOAOD.root" % (options.mX, options.mY)
 if options.massPoint:
-    ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/GEN/TRSM_XToHY_6b_%s_GEN.root" % options.massPoint
+    ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/NANOAOD/TRSM_XToHY_6b_%s_NANOAOD.root" % options.massPoint
 
-# single input file for testing
-ifile = "./data/TRSM_XToHY_6b_M3_2800_M2_700_NANOAOD.root"
+# # single input file for testing
+# ifile = "./data/TRSM_XToHY_6b_M3_2800_M2_700_NANOAOD.root"
 
 # open root input file directly 
 evtFile = ROOT.TFile.Open(ifile)
