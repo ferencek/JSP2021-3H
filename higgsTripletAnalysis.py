@@ -39,6 +39,11 @@ parser.add_option("--withNu", action="store_true",
                   help="Include neutrinos in GenJets",
                   default=False)
 
+parser.add_option("--slim", action="store",
+                  dest="slim",
+                  help="Exclude jets under given pt",
+                  default=100)
+
 (options, args) = parser.parse_args()
 
 
@@ -57,6 +62,8 @@ if options.massPoint:
     histo_filename = "./hist/HISTOGRAMS_TRSM_XToHY_6b_%s.root" % options.massPoint
 if options.withNu:
     histo_filename = histo_filename.replace(".root", "_WithNu.root")
+if options.slim:
+    histo_filename = histo_filename.replace(".root","_slim%i.root" %options.slim)
 
 # # single output file for testing
 # histo_filename = "HISTOGRAMS_TRSM_XToHY_6b_M3_2800_M2_700.root"
@@ -169,6 +176,10 @@ for i,event in enumerate(events):
 
     higgs_candidatesList=[]
     for jet in jets:
+        # slimmed jets
+        if jet.pt()<=100:
+            continue
+
         h_jetmass.Fill(jet.mass())
         h_jetphi.Fill(jet.phi())
         h_jeteta.Fill(jet.eta())
