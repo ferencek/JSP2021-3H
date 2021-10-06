@@ -1,7 +1,8 @@
-higgsTripletAnalysis.py reads single input file ./data/TRSM_XToHY_6b_M3_2800_M2_700_GEN.root
-and creates output HISTOGRAMS_TRSM_XToHY_6b_M3_2800_M2_700_GEN.root
+higgsTripletAnalysis.py 
+higgsTripletAnalysis_nanoAOD.py 
 
-higgsTripletAnalysis_nanoAOD.py reads single input file ./data/TRSM_XToHY_6b_M3_2800_M2_700_nanoAOD.root
-and creates output nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_2800_M2_700_nanoAOD.root
+options: --maxEvents --mX --mY --reportEvery --withNu --massPoint
 
-Test files don't do anything..
+input file is from /STORE/ferencek/TRSM_XToHY_6b/
+
+output goes to ./hist/
