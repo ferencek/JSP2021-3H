@@ -62,9 +62,9 @@ def findDaughters(n,partList):
     return dIndex
 
 # output histogram file
-histo_filename = "./hist/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i.root" % (options.mX, options.mY)
+histo_filename = "./hist/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i_FatJet.root" % (options.mX, options.mY)
 if options.massPoint:
-    histo_filename = "./hist/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_%s.root" % options.massPoint
+    histo_filename = "./hist/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_%s_FatJet.root" % options.massPoint
 if options.withNu:
     histo_filename = histo_filename.replace(".root", "_WithNu.root")
 
@@ -179,24 +179,24 @@ for i,e in enumerate(events):
             if DeltaR < 0.8:
                 higgscount +=1
 
-    # using GenJetAK8 - ak8 Jets made with visible genparticles
+    # using FatJet - ak8 Jets made with visible genparticles
     higgs_candidatesList=[]
 
     # empty Lorentz4vector for calculating rapidity
     jetVec = ROOT.TLorentzVector()
     hVec   = ROOT.TLorentzVector()
 
-    for j in range(e.nGenJetAK8):
-        h_jetmass.Fill(e.GenJetAK8_mass[j])
-        h_jetphi.Fill(e.GenJetAK8_phi[j])
-        h_jeteta.Fill(e.GenJetAK8_eta[j])
-        h_jetpt.Fill(e.GenJetAK8_pt[j])
+    for j in range(e.nFatJet):
+        h_jetmass.Fill(e.FatJet_mass[j])
+        h_jetphi.Fill(e.FatJet_phi[j])
+        h_jeteta.Fill(e.FatJet_eta[j])
+        h_jetpt.Fill(e.FatJet_pt[j])
 
         for h in higgsList:    
             hVec.SetPtEtaPhiM(e.GenPart_pt[h],e.GenPart_eta[h],e.GenPart_phi[h],e.GenPart_mass[h])
-            jetVec.SetPtEtaPhiM(e.GenJetAK8_pt[j],e.GenJetAK8_eta[j],e.GenJetAK8_phi[j],e.GenJetAK8_mass[j])
+            jetVec.SetPtEtaPhiM(e.FatJet_pt[j],e.FatJet_eta[j],e.FatJet_phi[j],e.FatJet_mass[j])
             
-            dphi=DeltaPhi(e.GenJetAK8_phi[j],e.GenPart_phi[h])
+            dphi=DeltaPhi(e.FatJet_phi[j],e.GenPart_phi[h])
             dy=abs(jetVec.Rapidity() - hVec.Rapidity())
             DeltaR=hypot(dy, dphi)
 
@@ -205,21 +205,21 @@ for i,e in enumerate(events):
                 h_higgsphi_matched.Fill(e.GenPart_phi[h])
                 h_higgseta_matched.Fill(e.GenPart_eta[h])
                 h_higgspt_matched.Fill(e.GenPart_pt[h])
-                h_jetmass_matched.Fill(e.GenJetAK8_mass[j])
-                h_jetphi_matched.Fill(e.GenJetAK8_phi[j])
-                h_jeteta_matched.Fill(e.GenJetAK8_eta[j])
-                h_jetpt_matched.Fill(e.GenJetAK8_pt[j])
-                h_jet_pt_vs_higgs_pt.Fill(e.GenPart_pt[h],e.GenJetAK8_pt[j])
-                h_jet_mass_vs_higgs_pt.Fill(e.GenPart_pt[h],e.GenJetAK8_mass[j])
+                h_jetmass_matched.Fill(e.FatJet_mass[j])
+                h_jetphi_matched.Fill(e.FatJet_phi[j])
+                h_jeteta_matched.Fill(e.FatJet_eta[j])
+                h_jetpt_matched.Fill(e.FatJet_pt[j])
+                h_jet_pt_vs_higgs_pt.Fill(e.GenPart_pt[h],e.FatJet_pt[j])
+                h_jet_mass_vs_higgs_pt.Fill(e.GenPart_pt[h],e.FatJet_mass[j])
 
                 dIndex = findDaughters(h,allPart)
         
                 partVec1.SetPtEtaPhiM(e.GenPart_pt[dIndex[0]],e.GenPart_eta[dIndex[0]],e.GenPart_phi[dIndex[0]],e.GenPart_mass[dIndex[0]])
                 partVec2.SetPtEtaPhiM(e.GenPart_pt[dIndex[1]],e.GenPart_eta[dIndex[1]],e.GenPart_phi[dIndex[1]],e.GenPart_mass[dIndex[1]])
             
-                dphi1=DeltaPhi(e.GenJetAK8_phi[j], e.GenPart_phi[dIndex[0]])
+                dphi1=DeltaPhi(e.FatJet_phi[j], e.GenPart_phi[dIndex[0]])
                 dy1=abs(jetVec.Rapidity() - partVec1.Rapidity())
-                dphi2=DeltaPhi(e.GenJetAK8_phi[j], e.GenPart_phi[dIndex[1]])
+                dphi2=DeltaPhi(e.FatJet_phi[j], e.GenPart_phi[dIndex[1]])
                 dy2=abs(jetVec.Rapidity() - partVec2.Rapidity())
 
                 dR1=hypot(dy1, dphi1)
@@ -228,7 +228,7 @@ for i,e in enumerate(events):
                 h_max_DR_vs_higgs_pt.Fill(e.GenPart_pt[h],max(dR1,dR2))
                 h_DeltaR_vs_higgs_pt.Fill(e.GenPart_pt[h],DeltaR)
 
-        if (e.GenJetAK8_pt[j] > 250 and abs(e.GenJetAK8_eta[j]) < 2 and e.GenJetAK8_mass[j] > 100 and e.GenJetAK8_mass[j] < 150):
+        if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
             higgs_candidatesList.append(j)
 
     h_multiplicityN_higgs_candidates.Fill(len(higgs_candidatesList))
