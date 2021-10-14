@@ -107,6 +107,7 @@ h_multiplicityN_higgs_candidates = ROOT.TH1F("h_multiplicityN_higgs_candidates",
 h_multiplicityN_higgs_candidates_boosted = ROOT.TH1F("h_multiplicityN_higgs_candidates_boosted", "h_multiplicityN_higgs_candidates_boosted", 5,-0.5,4.5)
 
 h_FatJet_msoftdrop = ROOT.TH1F("h_FatJet_msoftdrop", "soft drop mass",300,0,300)
+h_msoftdrop_vs_massjet = ROOT.TH2F("h_msoftdrop_vs_massjet", ";m_{jet} [GeV]; m_{softdrop} [GeV]",300,0,300,300,0,300)
 
 # input file
 ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/NANOAOD/TRSM_XToHY_6b_M3_%i_M2_%i_NANOAOD.root" % (options.mX, options.mY)
@@ -188,11 +189,12 @@ for i,e in enumerate(events):
     hVec   = ROOT.TLorentzVector()
 
     for j in range(e.nFatJet):
-        h_jetmass.Fill(e.FatJet_mass[j])
+        h_jetmass.Fill(e.FatJet_mass[j]*(1-e.FatJet_rawFactor[j]))
         h_jetphi.Fill(e.FatJet_phi[j])
         h_jeteta.Fill(e.FatJet_eta[j])
-        h_jetpt.Fill(e.FatJet_pt[j])
+        h_jetpt.Fill(e.FatJet_pt[j]*(1-e.FatJet_rawFactor[j]))
         h_FatJet_msoftdrop.Fill(e.FatJet_msoftdrop[j])
+        h_msoftdrop_vs_massjet.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
 
         for h in higgsList:    
             hVec.SetPtEtaPhiM(e.GenPart_pt[h],e.GenPart_eta[h],e.GenPart_phi[h],e.GenPart_mass[h])
