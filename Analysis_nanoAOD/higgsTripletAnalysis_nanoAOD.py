@@ -38,6 +38,11 @@ parser.add_option("--withNu", action="store_true",
                   help="Include neutrinos in GenJets",
                   default=False)
 
+parser.add_option("--msoftdrop", action="store_true",
+                  dest="msoftdrop",
+                  help="Use jet soft drop mass instead of just jet mass",
+                  default=False)
+
 (options, args) = parser.parse_args()
 
 def DeltaPhi(v1, v2, c = 3.141592653589793):
@@ -67,6 +72,8 @@ if options.massPoint:
     histo_filename = "nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_%s_FatJet.root" % options.massPoint
 if options.withNu:
     histo_filename = histo_filename.replace(".root", "_WithNu.root")
+if options.msoftdrop:
+    histo_filename = histo_filename.replace(".root", "_msoftdrop.root")
 
 # # single output file for testing
 # histo_filename = "nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_2800_M2_700.root"
@@ -261,7 +268,11 @@ for i,e in enumerate(events):
                 h_msoftdrop_unmatched.Fill(e.FatJet_msoftdrop[j])
                 h_msoftdrop_vs_massjet_unmatched.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
 
-        if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
+        if options.msoftdrop:
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
+                higgs_candidatesList.append(j)
+        else:
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
             higgs_candidatesList.append(j)
 
     h_multiplicityN_higgs_candidates.Fill(len(higgs_candidatesList))
