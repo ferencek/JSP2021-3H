@@ -1,6 +1,25 @@
 import ROOT as r
 import copy
 
+from optparse import OptionParser
+parser = OptionParser()
+
+parser.add_option("--withNu", action="store_true",
+                  dest="withNu",
+                  help="Include neutrinos in GenJets",
+                  default=False)
+
+parser.add_option("--msoftdrop", action="store_true",
+                  dest="msoftdrop",
+                  help="Use jet soft drop mass instead of just jet mass",
+                  default=False)
+
+parser.add_option('-o', '--output', action='store',
+                  dest='condor_output',
+                  help='Output folder of analysis in which the histograms are stored')
+
+(options, args) = parser.parse_args()
+
 #---------------------------------------------------------------------
 # to run in the batch mode (to prevent canvases from popping up)
 r.gROOT.SetBatch()
@@ -157,7 +176,12 @@ n = 0
 for mX in range(mX_min, mX_max + mX_step, mX_step):
     for mY in sorted(list(set([260,mX-140])) + range(300, mX-125, mY_step)):
         values.write('{:>3d}  {:>4d}  {:>4d}'.format(n+1, mX, mY))
-        f = r.TFile("/users/ldulibic/GENhiggs/Analysis/GEN_testAnalysisCondor_20211021105733/HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i.root" % (mX, mY))
+        readHist = "/users/ldulibic/nanoAODhiggs/Analysis_nanoAOD/"+options.condor_output+"/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i_FatJet.root" % (mX,mY)
+        if options.withNu:
+            readHist = readHist.replace(".root", "_WithNu.root")
+        if options.msoftdrop:
+            readHist = readHist.replace(".root", "_msoftdrop.root")
+        f = r.TFile(readHist)
         f.cd()
         h1_b = f.Get("h_multiplicityN_higgs_candidates")
         h2_b = f.Get('h_DeltaR_bb_vs_higgspt')

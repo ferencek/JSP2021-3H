@@ -99,7 +99,7 @@ eval `scram runtime -sh`
 
 python ${OUTPUTDIR}/${SCRIPT} --mX=${M3MASS} --mY=${M2MASS} DUMMY_NEUTRINO M_SOFTDROP
 
-mv -v HISTOGRAMS_*.root ${OUTPUTDIR}
+mv -v nanoAOD_HISTOGRAMS_*.root ${OUTPUTDIR}
 exitcode=$?
 
 echo ""
