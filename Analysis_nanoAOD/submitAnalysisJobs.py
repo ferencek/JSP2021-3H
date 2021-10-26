@@ -33,6 +33,11 @@ parser.add_option("--withNu", action="store_true",
                   help="Include neutrinos in GenJets",
                   default=False)
 
+parser.add_option("--msoftdrop", action="store_true",
+                  dest="msoftdrop",
+                  help="Use jet soft drop mass instead of just jet mass",
+                  default=False)
+
 (options, args) = parser.parse_args()
 
 # make sure all necessary input parameters are provided
@@ -92,7 +97,7 @@ scram project CMSSW CMSSW_10_6_0
 cd CMSSW_10_6_0/src/
 eval `scram runtime -sh`
 
-python ${OUTPUTDIR}/${SCRIPT} --mX=${M3MASS} --mY=${M2MASS} DUMMY_NEUTRINO
+python ${OUTPUTDIR}/${SCRIPT} --mX=${M3MASS} --mY=${M2MASS} DUMMY_NEUTRINO M_SOFTDROP
 
 mv -v HISTOGRAMS_*.root ${OUTPUTDIR}
 exitcode=$?
@@ -115,6 +120,7 @@ bash_path = os.path.join(condor_folder,'analysisJob.sh')
 bash_script = open(bash_path,'w')
 bash_content = bash_template
 bash_content = re.sub('DUMMY_NEUTRINO',('--withNu' if options.withNu else ''),bash_content)
+bash_content = re.sub('M_SOFTDROP', ('--msoftdrop' if options.msoftdrop else ''),bash_content)
 bash_script.write(bash_content)
 bash_script.close()
 os.system('chmod +x ' + bash_path)
