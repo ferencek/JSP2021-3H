@@ -6,8 +6,8 @@ import datetime
 
 mX_min = 400
 mX_max = 4000
-mX_step = 200
-mY_step = 200
+mX_step = 400
+mY_step = 400
 
 
 failedMassPoints = []
