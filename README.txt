@@ -1,5 +1,6 @@
-higgsTripletAnalysis.py 
-higgsTripletAnalysis_nanoAOD.py 
+higgsTripletAnalysis.py - runs analysis on GEN input files 
+
+higgsTripletAnalysis_nanoAOD.py - runs analysis on nanoAOD input files 
 
 options: --maxEvents --mX --mY --reportEvery --withNu --massPoint
 
