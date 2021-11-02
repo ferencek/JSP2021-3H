@@ -203,12 +203,13 @@ for i,e in enumerate(events):
     higgs_candidatesList=[]
     higgs_candidatesList_matched=[]
     higgs_candidatesList_unmatched=[]
+    jets_matched=[]
 
     # empty Lorentz4vector for calculating rapidity
     jetVec = ROOT.TLorentzVector()
     hVec   = ROOT.TLorentzVector()
 
-    print(higgsList)
+    #print(higgsList)
 
     for j in range(e.nFatJet):
         h_jetmass.Fill(e.FatJet_mass[j]*(1-e.FatJet_rawFactor[j]))
@@ -234,6 +235,8 @@ for i,e in enumerate(events):
             DeltaR=hypot(dy, dphi)
 
             if DeltaR < 0.2: # matched
+                jets_matched.append(j)
+
                 h_higgsmass_matched.Fill(e.GenPart_mass[h])
                 h_higgsphi_matched.Fill(e.GenPart_phi[h])
                 h_higgseta_matched.Fill(e.GenPart_eta[h])
@@ -271,26 +274,46 @@ for i,e in enumerate(events):
                     if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
                         higgs_candidatesList_matched.append(j)
 
-            else: # unmatched
-                h_jetmass_unmatched.Fill(e.FatJet_mass[j])
-                h_jetphi_unmatched.Fill(e.FatJet_phi[j])
-                h_jeteta_unmatched.Fill(e.FatJet_eta[j])
-                h_jetpt_unmatched.Fill(e.FatJet_pt[j])
+            # else: # unmatched
+            #     h_jetmass_unmatched.Fill(e.FatJet_mass[j])
+            #     h_jetphi_unmatched.Fill(e.FatJet_phi[j])
+            #     h_jeteta_unmatched.Fill(e.FatJet_eta[j])
+            #     h_jetpt_unmatched.Fill(e.FatJet_pt[j])
 
-                h_msoftdrop_unmatched.Fill(e.FatJet_msoftdrop[j])
-                h_msoftdrop_vs_massjet_unmatched.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
+            #     h_msoftdrop_unmatched.Fill(e.FatJet_msoftdrop[j])
+            #     h_msoftdrop_vs_massjet_unmatched.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
                 
-                if options.msoftdrop:
-                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
-                        higgs_candidatesList_unmatched.append(j)
-                else:
-                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
-                        higgs_candidatesList_unmatched.append(j)
+            #     if options.msoftdrop:
+            #         if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
+            #             higgs_candidatesList_unmatched.append(j)
+            #     else:
+            #         if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
+            #             higgs_candidatesList_unmatched.append(j)
 
-    #print(len(higgs_candidatesList_matched)+len(higgs_candidatesList_unmatched)-len(higgs_candidatesList))
-    print(higgs_candidatesList_unmatched)
-    print(higgs_candidatesList_matched)
-    print(higgs_candidatesList)
+    # unmatched
+    for j in range(e.nFatJet):
+        if j in jets_matched:
+            continue
+
+        h_jetmass_unmatched.Fill(e.FatJet_mass[j])
+        h_jetphi_unmatched.Fill(e.FatJet_phi[j])
+        h_jeteta_unmatched.Fill(e.FatJet_eta[j])
+        h_jetpt_unmatched.Fill(e.FatJet_pt[j])
+
+        h_msoftdrop_unmatched.Fill(e.FatJet_msoftdrop[j])
+        h_msoftdrop_vs_massjet_unmatched.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
+        
+        if options.msoftdrop:
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
+                higgs_candidatesList_unmatched.append(j)
+        else:
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
+                higgs_candidatesList_unmatched.append(j)
+
+    # print(len(higgs_candidatesList_matched)+len(higgs_candidatesList_unmatched)-len(higgs_candidatesList))
+    # print(higgs_candidatesList_unmatched)
+    # print(higgs_candidatesList_matched)
+    # print(higgs_candidatesList)
 
     h_multiplicityN_higgs_candidates_matched.Fill(len(higgs_candidatesList_matched))
     h_multiplicityN_higgs_candidates_unmatched.Fill(len(higgs_candidatesList_unmatched))

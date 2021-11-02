@@ -153,8 +153,13 @@ def plot(graph, graphs_BP, name, plotBP=False):
 # regular mass points
 gr_GenPart = copy.deepcopy(r.TGraph2D())
 gr_FatJet = copy.deepcopy(r.TGraph2D())
+gr_FatJetMatched = copy.deepcopy(r.TGraph2D())
+gr_FatJetUnmatched = copy.deepcopy(r.TGraph2D())
+
 gr_GenPart.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates (GenPart)")
 gr_FatJet.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates (FatJet)")
+gr_FatJetMatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates matched to Higgs particle (FatJet)")
+gr_FatJetUnmatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates unmatched to Higgs particle (FatJet)")
 
 boosted_higgs_graphsGenPart = [copy.deepcopy(r.TGraph2D()) for i in range(4)]
 boosted_higgs_graphsFatJet = [copy.deepcopy(r.TGraph2D()) for i in range(4)]
@@ -184,25 +189,42 @@ for mX in range(mX_min, mX_max + mX_step, mX_step):
         f = r.TFile(readHist)
         f.cd()
         h1_b = f.Get("h_multiplicityN_higgs_candidates")
-        h2_b = f.Get('h_DeltaR_bb_vs_higgspt')
+        #h2_b = f.Get('h_DeltaR_bb_vs_higgspt')
         h2_n = f.Get('h_higgs_pt_all')
         h1_n = f.Get('h_multiplicityN_higgs_candidates_boosted')
-        frac_GenPart = h2_b.Integral(0,h2_b.GetNbinsX()+1,0,h2_b.GetYaxis().FindBin(0.8)-1)/ h2_n.Integral(0,h2_n.GetNbinsX()+1)
+        h_matched = f.Get('h_multiplicityN_higgs_candidates_matched')
+        h_unmatched = f.Get('h_multiplicityN_higgs_candidates_unmatched')
         
-        # frac_testGenPart = h1_n.Integral() / h2_n.Integral(0,h2_n.GetNbinsX()+1)
-        # print("test",frac_GenPart-frac_testGenPart)
+        #frac_GenPart = h2_b.Integral(0,h2_b.GetNbinsX()+1,0,h2_b.GetYaxis().FindBin(0.8)-1)/ h2_n.Integral(0,h2_n.GetNbinsX()+1)
+        nHiggsCandsGenPartBoosted = 0
+        for i in range(1,5):
+            nHiggsCandsGenPartBoosted += h1_n.GetBinContent(i+1)*i
+        frac_GenPart = float(nHiggsCandsGenPartBoosted)/h2_n.Integral(0,h2_n.GetNbinsX()+1)
+        # print("test",frac_GenPart-frac_testGenPart) the definition is equivalent!
 
-        nHiggsCands=0
+        nHiggsCands = 0
         for i in range(1,5):
             nHiggsCands += h1_b.GetBinContent(i+1)*i
-            
         frac_FatJet=float(nHiggsCands)/h2_n.Integral(0,h2_n.GetNbinsX()+1)
+
+        nHiggsCandsMatched = 0
+        for i in range(1,5):
+            nHiggsCandsMatched += h_matched.GetBinContent(i+1)*i
+        frac_FatJetMatched = float(nHiggsCandsMatched) / h2_n.Integral(0,h2_n.GetNbinsX()+1)
+
+        nHiggsCandsUnmatched = 0
+        for i in range(1,5):
+            nHiggsCandsUnmatched += h_unmatched.GetBinContent(i+1)*i
+        frac_FatJetUnmatched = float(nHiggsCandsUnmatched) / h2_n.Integral(0,h2_n.GetNbinsX()+1)
+
         print ("(mX, mY) = (%i, %i)" % (mX, mY))
         print (frac_GenPart)
         print (frac_FatJet)
         values.write('    {:.3f}      {:.3f}   '.format(frac_GenPart, frac_FatJet))
         gr_GenPart.SetPoint(n,mX,mY,frac_GenPart)
         gr_FatJet.SetPoint(n,mX,mY,frac_FatJet)
+        gr_FatJetMatched.SetPoint(n,mX,mY,frac_FatJetMatched)
+        gr_FatJetUnmatched.SetPoint(n,mX,mY,frac_FatJetUnmatched)
         for count in range(4):
             frac_GenPart = h1_n.GetBinContent(count+1) / h1_n.Integral()
             frac_FatJet = h1_b.GetBinContent(count+1) / h1_b.Integral()
@@ -261,9 +283,13 @@ boosted_higgs_graphsFatJet_BP = [[copy.deepcopy(r.TGraph2D()) for point in point
 if options.msoftdrop:
     plot(gr_GenPart, gr_GenPart_BP, "BoostedHiggsFraction_GenPart_msoftdrop.pdf")
     plot(gr_FatJet, gr_FatJet_BP, "BoostedHiggsFraction_FatJet_msoftdrop.pdf")
+    plot(gr_FatJetMatched,[],"BoostedHiggsFraction_FatJet_matched_msoftdrop.pdf")
+    plot(gr_FatJetUnmatched,[],"BoostedHiggsFraction_FatJet_unmatched_msoftdrop.pdf")
 else:
     plot(gr_GenPart, gr_GenPart_BP, "BoostedHiggsFraction_GenPart.pdf")
     plot(gr_FatJet, gr_FatJet_BP, "BoostedHiggsFraction_FatJet.pdf")
+    plot(gr_FatJetMatched,[],"BoostedHiggsFraction_FatJet_matched.pdf")
+    plot(gr_FatJetUnmatched,[],"BoostedHiggsFraction_FatJet_unmatched.pdf")
 for i in range(4):
     if options.msoftdrop:
         plot(boosted_higgs_graphsGenPart[i], boosted_higgs_graphsGenPart_BP[i], "Event_Selection_eff_%i_GenPart_msoftdrop.pdf"%i)
