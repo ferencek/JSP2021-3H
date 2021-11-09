@@ -1,5 +1,6 @@
 import ROOT as r
 import copy
+import os
 
 from optparse import OptionParser
 parser = OptionParser()
@@ -9,14 +10,14 @@ parser.add_option("--withNu", action="store_true",
                   help="Include neutrinos in GenJets",
                   default=False)
 
-parser.add_option("--msoftdrop", action="store_true",
-                  dest="msoftdrop",
-                  help="Use jet soft drop mass instead of just jet mass",
-                  default=False)
+parser.add_option('--omjet', '--outputMjet', action='store',
+                  dest='condor_outputMjet',
+                  help='Output folder of analysis in which the mjet histograms are stored')
 
-parser.add_option('-o', '--output', action='store',
-                  dest='condor_output',
-                  help='Output folder of analysis in which the histograms are stored')
+parser.add_option('--omsoftdrop', '--outputMsoftdrop', action='store',
+                  dest='condor_outputMsoftdrop',
+                  help='Output folder of analysis in which the msoftdrop histograms are stored')
+
 
 (options, args) = parser.parse_args()
 
@@ -151,24 +152,45 @@ def plot(graph, graphs_BP, name, plotBP=False):
 
 #---------------------------------------------------------------------
 # regular mass points
-gr_GenPart = copy.deepcopy(r.TGraph2D())
-gr_FatJet = copy.deepcopy(r.TGraph2D())
-gr_FatJetMatched = copy.deepcopy(r.TGraph2D())
+gr_GenPart         = copy.deepcopy(r.TGraph2D())
+gr_FatJet          = copy.deepcopy(r.TGraph2D())
+gr_FatJetMatched   = copy.deepcopy(r.TGraph2D())
 gr_FatJetUnmatched = copy.deepcopy(r.TGraph2D())
+
+gr_GenPart_msd         = copy.deepcopy(r.TGraph2D())
+gr_FatJet_msd          = copy.deepcopy(r.TGraph2D())
+gr_FatJetMatched_msd   = copy.deepcopy(r.TGraph2D())
+gr_FatJetUnmatched_msd = copy.deepcopy(r.TGraph2D())
+
+gr_msdTOmjetRatioMatched   = copy.deepcopy(r.TGraph2D()) # matched softdrop / matched mjet
+gr_msdTOmjetRatioUnmatched = copy.deepcopy(r.TGraph2D()) # unmatched softdrop / unmatched mjet
+gr_matchedTOallRatio       = copy.deepcopy(r.TGraph2D()) # matched / all 
+gr_matchedTOallRatio_msd   = copy.deepcopy(r.TGraph2D()) # matched / all with softdrop mass
 
 gr_GenPart.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates (GenPart)")
 gr_FatJet.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates (FatJet)")
 gr_FatJetMatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates matched to Higgs particle (FatJet)")
 gr_FatJetUnmatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates unmatched to Higgs particle (FatJet)")
+gr_GenPart_msd.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates (GenPart)")
+gr_FatJet_msd.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates (FatJet)")
+gr_FatJetMatched_msd.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates matched to Higgs particle (FatJet)")
+gr_FatJetUnmatched_msd.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of boosted Higgs boson candidates unmatched to Higgs particle (FatJet)")
+gr_msdTOmjetRatioMatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (matched)")
+gr_msdTOmjetRatioUnmatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (unmatched)")
 
 boosted_higgs_graphsGenPart = [copy.deepcopy(r.TGraph2D()) for i in range(4)]
-boosted_higgs_graphsFatJet = [copy.deepcopy(r.TGraph2D()) for i in range(4)]
+boosted_higgs_graphsFatJet  = [copy.deepcopy(r.TGraph2D()) for i in range(4)]
+boosted_higgs_graphsGenPart_msd = [copy.deepcopy(r.TGraph2D()) for i in range(4)]
+boosted_higgs_graphsFatJet_msd  = [copy.deepcopy(r.TGraph2D()) for i in range(4)]
+
 for i in range(4):
     boosted_higgs_graphsGenPart[i].SetTitle(";m_{X} [TeV];m_{Y} [TeV];Event selection eff. (%i H cand.)"%i)
     boosted_higgs_graphsFatJet[i].SetTitle(";m_{X} [TeV];m_{Y} [TeV];Event selection eff. (%i H cand.)"%i)
+    boosted_higgs_graphsGenPart_msd[i].SetTitle(";m_{X} [TeV];m_{Y} [TeV];Event selection eff. (%i H cand.)"%i)
+    boosted_higgs_graphsFatJet_msd[i].SetTitle(";m_{X} [TeV];m_{Y} [TeV];Event selection eff. (%i H cand.)"%i)
 
-mX_min = 400
-mX_max = 4000
+mX_min  = 400
+mX_max  = 4000
 mX_step = 400
 mY_step = 400
 
@@ -181,55 +203,96 @@ n = 0
 for mX in range(mX_min, mX_max + mX_step, mX_step):
     for mY in sorted(list(set([260,mX-140])) + range(300, mX-125, mY_step)):
         values.write('{:>3d}  {:>4d}  {:>4d}'.format(n+1, mX, mY))
-        readHist = "/users/ldulibic/nanoAODhiggs/Analysis_nanoAOD/"+options.condor_output+"/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i_FatJet.root" % (mX,mY)
+
+        readHist = "/users/ldulibic/nanoAODhiggs/Analysis_nanoAOD/"+options.condor_outputMjet+"/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i_FatJet.root" % (mX,mY)
         if options.withNu:
             readHist = readHist.replace(".root", "_WithNu.root")
-        if options.msoftdrop:
-            readHist = readHist.replace(".root", "_msoftdrop.root")
         f = r.TFile(readHist)
+
+        readHist = "/users/ldulibic/nanoAODhiggs/Analysis_nanoAOD/"+options.condor_outputMsoftdrop+"/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i_FatJet_msoftdrop.root" % (mX,mY)
+        if options.withNu:
+            readHist = readHist.replace(".root", "_WithNu.root")
+        g = r.TFile(readHist)
+
         f.cd()
-        h1_b = f.Get("h_multiplicityN_higgs_candidates")
-        #h2_b = f.Get('h_DeltaR_bb_vs_higgspt')
-        h2_n = f.Get('h_higgs_pt_all')
-        h1_n = f.Get('h_multiplicityN_higgs_candidates_boosted')
-        h_matched = f.Get('h_multiplicityN_higgs_candidates_matched')
-        h_unmatched = f.Get('h_multiplicityN_higgs_candidates_unmatched')
-        
-        #frac_GenPart = h2_b.Integral(0,h2_b.GetNbinsX()+1,0,h2_b.GetYaxis().FindBin(0.8)-1)/ h2_n.Integral(0,h2_n.GetNbinsX()+1)
-        nHiggsCandsGenPartBoosted = 0
-        for i in range(1,5):
-            nHiggsCandsGenPartBoosted += h1_n.GetBinContent(i+1)*i
-        frac_GenPart = float(nHiggsCandsGenPartBoosted)/h2_n.Integral(0,h2_n.GetNbinsX()+1)
-        # print("test",frac_GenPart-frac_testGenPart) the definition is equivalent!
+        candidates = f.Get("h_HCands")          # jet candidates for higgs
+        pt_all = f.Get('h_higgs_pt_all')                                # all higgs in all events
+        boosted = f.Get('h_HCands_boosted')     # gen part boosted higgs
+        matched = f.Get('h_HCands_matched')     # jet candidates matched to higgs genpart
+        unmatched = f.Get('h_HCands_unmatched') # jet candidates not matched to higgs genpart 
 
-        nHiggsCands = 0
-        for i in range(1,5):
-            nHiggsCands += h1_b.GetBinContent(i+1)*i
-        frac_FatJet=float(nHiggsCands)/h2_n.Integral(0,h2_n.GetNbinsX()+1)
+        g.cd()
+        candidates_msd = g.Get("h_HCands")          # jet candidates for higgs
+        pt_all_msd = g.Get('h_higgs_pt_all')                                # all higgs in all events
+        boosted_msd = g.Get('h_HCands_boosted')     # gen part boosted higgs
+        matched_msd = g.Get('h_HCands_matched')     # jet candidates matched to higgs genpart
+        unmatched_msd = g.Get('h_HCands_unmatched') # jet candidates not matched to higgs genpart
 
-        nHiggsCandsMatched = 0
+        nHiggsCandsBoosted     = 0
+        nHiggsCandsBoosted_msd = 0
         for i in range(1,5):
-            nHiggsCandsMatched += h_matched.GetBinContent(i+1)*i
-        frac_FatJetMatched = float(nHiggsCandsMatched) / h2_n.Integral(0,h2_n.GetNbinsX()+1)
+            nHiggsCandsBoosted     += boosted.GetBinContent(i+1)*i
+            nHiggsCandsBoosted_msd += boosted_msd.GetBinContent(i+1)*i
+        frac_GenPart     = float(nHiggsCandsBoosted) / pt_all.Integral(0, pt_all.GetNbinsX()+1)
+        frac_GenPart_msd = float(nHiggsCandsBoosted_msd) / pt_all_msd.Integral(0, pt_all_msd.GetNbinsX()+1)
 
-        nHiggsCandsUnmatched = 0
+        nHiggsCands     = 0
+        nHiggsCands_msd = 0
         for i in range(1,5):
-            nHiggsCandsUnmatched += h_unmatched.GetBinContent(i+1)*i
-        frac_FatJetUnmatched = float(nHiggsCandsUnmatched) / h2_n.Integral(0,h2_n.GetNbinsX()+1)
+            nHiggsCands     += candidates.GetBinContent(i+1)*i
+            nHiggsCands_msd += candidates_msd.GetBinContent(i+1)*i
+        frac_FatJet     = float(nHiggsCands) / pt_all.Integral(0, pt_all.GetNbinsX()+1)
+        frac_FatJet_msd = float(nHiggsCands_msd) / pt_all_msd.Integral(0, pt_all_msd.GetNbinsX()+1)
 
-        print ("(mX, mY) = (%i, %i)" % (mX, mY))
-        print (frac_GenPart)
-        print (frac_FatJet)
+        nHiggsCandsMatched     = 0
+        nHiggsCandsMatched_msd = 0
+        for i in range(1,5):
+            nHiggsCandsMatched     += matched.GetBinContent(i+1)*i
+            nHiggsCandsMatched_msd += matched_msd.GetBinContent(i+1)*i
+        frac_FatJetMatched     = float(nHiggsCandsMatched) / pt_all.Integral(0, pt_all.GetNbinsX()+1)
+        frac_FatJetMatched_msd = float(nHiggsCandsMatched_msd) / pt_all_msd.Integral(0, pt_all_msd.GetNbinsX()+1)
+
+        nHiggsCandsUnmatched     = 0
+        nHiggsCandsUnmatched_msd = 0
+        for i in range(1,5):
+            nHiggsCandsUnmatched     += unmatched.GetBinContent(i+1)*i
+            nHiggsCandsUnmatched_msd += unmatched_msd.GetBinContent(i+1)*i
+        frac_FatJetUnmatched     = float(nHiggsCandsUnmatched) / pt_all.Integral(0, pt_all.GetNbinsX()+1)
+        frac_FatJetUnmatched_msd = float(nHiggsCandsUnmatched_msd) / pt_all_msd.Integral(0, pt_all_msd.GetNbinsX()+1)
+
+        # print ("(mX, mY) = (%i, %i)" % (mX, mY))
+        # print (frac_GenPart)
+        # print (frac_FatJet)
+
         values.write('    {:.3f}      {:.3f}   '.format(frac_GenPart, frac_FatJet))
+
         gr_GenPart.SetPoint(n,mX,mY,frac_GenPart)
         gr_FatJet.SetPoint(n,mX,mY,frac_FatJet)
         gr_FatJetMatched.SetPoint(n,mX,mY,frac_FatJetMatched)
         gr_FatJetUnmatched.SetPoint(n,mX,mY,frac_FatJetUnmatched)
+
+        gr_GenPart_msd.SetPoint(n,mX,mY,frac_GenPart_msd)
+        gr_FatJet_msd.SetPoint(n,mX,mY,frac_FatJet_msd)
+        gr_FatJetMatched_msd.SetPoint(n,mX,mY,frac_FatJetMatched_msd)
+        gr_FatJetUnmatched_msd.SetPoint(n,mX,mY,frac_FatJetUnmatched_msd)     
+
+        gr_msdTOmjetRatioMatched.SetPoint(n,mX,mY,frac_FatJetMatched_msd/frac_FatJetMatched)
+        gr_msdTOmjetRatioUnmatched.SetPoint(n,mX,mY,frac_FatJetUnmatched_msd/frac_FatJetUnmatched)   
+
+        gr_matchedTOallRatio.SetPoint(n,mX,mY,frac_FatJetMatched/frac_FatJet)
+        gr_matchedTOallRatio_msd.SetPoint(n,mX,mY,frac_FatJetMatched_msd/frac_FatJet_msd)
+
         for count in range(4):
-            frac_GenPart = h1_n.GetBinContent(count+1) / h1_n.Integral()
-            frac_FatJet = h1_b.GetBinContent(count+1) / h1_b.Integral()
+            frac_GenPart     = boosted.GetBinContent(count+1) / boosted.Integral()
+            frac_FatJet      = candidates.GetBinContent(count+1) / candidates.Integral()
+            frac_GenPart_msd = boosted_msd.GetBinContent(count+1) / boosted_msd.Integral()
+            frac_FatJet_msd  = candidates_msd.GetBinContent(count+1) / candidates_msd.Integral()
+
             boosted_higgs_graphsGenPart[count].SetPoint(n, mX, mY, frac_GenPart)
             boosted_higgs_graphsFatJet[count].SetPoint(n, mX, mY, frac_FatJet)
+            boosted_higgs_graphsGenPart_msd[count].SetPoint(n, mX, mY, frac_GenPart)
+            boosted_higgs_graphsFatJet_msd[count].SetPoint(n, mX, mY, frac_FatJet)
+
             if count > 0: values.write('  {:.3f}    {:.3f}  '.format(frac_GenPart, frac_FatJet))
         values.write('\n')
         n += 1
@@ -238,13 +301,13 @@ values.close()
 
 #---------------------------------------------------------------------
 # benchmark points
-points = [(1600, 500), (2000, 300), (2000, 800), (2500, 300)]
-suffix = ["BPb", "BPd", "BPe", "BPf"]
+# points = [(1600, 500), (2000, 300), (2000, 800), (2500, 300)]
+# suffix = ["BPb", "BPd", "BPe", "BPf"]
 
-gr_GenPart_BP = [copy.deepcopy(r.TGraph2D()) for point in points]
-gr_FatJet_BP = [copy.deepcopy(r.TGraph2D()) for point in points]
-boosted_higgs_graphsGenPart_BP = [[copy.deepcopy(r.TGraph2D()) for point in points] for i in range(4)]
-boosted_higgs_graphsFatJet_BP = [[copy.deepcopy(r.TGraph2D()) for point in points] for i in range(4)]
+# gr_GenPart_BP = [copy.deepcopy(r.TGraph2D()) for point in points]
+# gr_FatJet_BP = [copy.deepcopy(r.TGraph2D()) for point in points]
+# boosted_higgs_graphsGenPart_BP = [[copy.deepcopy(r.TGraph2D()) for point in points] for i in range(4)]
+# boosted_higgs_graphsFatJet_BP = [[copy.deepcopy(r.TGraph2D()) for point in points] for i in range(4)]
 
 
 # for p in range(len(points)):
@@ -258,44 +321,54 @@ boosted_higgs_graphsFatJet_BP = [[copy.deepcopy(r.TGraph2D()) for point in point
 #         n = 0
 #         f = r.TFile("/users/ldulibic/GENhiggs/Analysis/GEN_testAnalysisCondor_20211021105733/HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i_%s.root" % (mX, mY, suffix[p]))
 #         f.cd()
-#         h1_b = f.Get("h_multiplicityN_higgs_candidates")
+#         candidates = f.Get("h_HCands")
 #         h2_b = f.Get('h_DeltaR_bb_vs_higgspt')
-#         h2_n = f.Get('h_higgs_pt_all')
-#         h1_n = f.Get('h_multiplicityN_higgs_candidates_boosted')
-#         frac_GenPart = h2_b.Integral(0,h2_b.GetNbinsX()+1,0,h2_b.GetYaxis().FindBin(0.8)-1)/ h2_n.Integral(0,h2_n.GetNbinsX()+1)
+#         pt_all = f.Get('pt_all')
+#         boosted = f.Get('h_HCands_boosted')
+#         frac_GenPart = h2_b.Integral(0,h2_b.GetNbinsX()+1,0,h2_b.GetYaxis().FindBin(0.8)-1)/ pt_all.Integral(0,pt_all.GetNbinsX()+1)
 #         nHiggsCands=0
 #         for i in range(1,5):
-#             nHiggsCands += h1_b.GetBinContent(i+1)*i
-#         frac_FatJet=float(nHiggsCands)/h2_n.Integral(0,h2_n.GetNbinsX()+1)
+#             nHiggsCands += candidates.GetBinContent(i+1)*i
+#         frac_FatJet=float(nHiggsCands)/pt_all.Integral(0,pt_all.GetNbinsX()+1)
 #         print ("(mX, mY) = (%i, %i)" % (mX, mY))
 #         print (frac_GenPart)
 #         print (frac_FatJet)
 #         gr_GenPart_BP[p].SetPoint(n,mX,mY,frac_GenPart)
 #         gr_FatJet_BP[p].SetPoint(n,mX,mY,frac_FatJet)
 #         for count in range(4):
-#             frac_GenPart = h1_n.GetBinContent(count+1) / h1_n.Integral()
-#             frac_FatJet = h1_b.GetBinContent(count+1) / h1_b.Integral()
+#             frac_GenPart = boosted.GetBinContent(count+1) / boosted.Integral()
+#             frac_FatJet = candidates.GetBinContent(count+1) / candidates.Integral()
 #             boosted_higgs_graphsGenPart_BP[count][p].SetPoint(n, mX, mY, frac_GenPart)
 #             boosted_higgs_graphsFatJet_BP[count][p].SetPoint(n, mX, mY, frac_FatJet)
 
 #---------------------------------------------------------------------
+
+try:
+    os.mkdir('figures')
+except OSError as error:
+    pass
+
 # make plots
-if options.msoftdrop:
-    plot(gr_GenPart, gr_GenPart_BP, "BoostedHiggsFraction_GenPart_msoftdrop.pdf")
-    plot(gr_FatJet, gr_FatJet_BP, "BoostedHiggsFraction_FatJet_msoftdrop.pdf")
-    plot(gr_FatJetMatched,[],"BoostedHiggsFraction_FatJet_matched_msoftdrop.pdf")
-    plot(gr_FatJetUnmatched,[],"BoostedHiggsFraction_FatJet_unmatched_msoftdrop.pdf")
-else:
-    plot(gr_GenPart, gr_GenPart_BP, "BoostedHiggsFraction_GenPart.pdf")
-    plot(gr_FatJet, gr_FatJet_BP, "BoostedHiggsFraction_FatJet.pdf")
-    plot(gr_FatJetMatched,[],"BoostedHiggsFraction_FatJet_matched.pdf")
-    plot(gr_FatJetUnmatched,[],"BoostedHiggsFraction_FatJet_unmatched.pdf")
+plot(gr_GenPart, [], "./figures/BoostedHiggsFraction_GenPart.pdf")
+plot(gr_FatJet, [], "./figures/BoostedHiggsFraction_FatJet.pdf")
+plot(gr_FatJetMatched,[],"./figures/BoostedHiggsFraction_FatJet_matched.pdf")
+plot(gr_FatJetUnmatched,[],"./figures/BoostedHiggsFraction_FatJet_unmatched.pdf")
+
+plot(gr_GenPart_msd, [], "./figures/BoostedHiggsFraction_GenPart_msoftdrop.pdf")
+plot(gr_FatJet_msd, [], "./figures/BoostedHiggsFraction_FatJet_msoftdrop.pdf")
+plot(gr_FatJetMatched_msd,[],"./figures/BoostedHiggsFraction_FatJet_matched_msoftdrop.pdf")
+plot(gr_FatJetUnmatched_msd,[],"./figures/BoostedHiggsFraction_FatJet_unmatched_msoftdrop.pdf")
+
+plot(gr_msdTOmjetRatioMatched,[],"./figures/msdTOmjetRatioMatched.pdf")
+plot(gr_msdTOmjetRatioUnmatched,[],"./figures/msdTOmjetRatioUnmatched.pdf")
+plot(gr_matchedTOallRatio,[],"./figures/MatchedToAllRatio.pdf")
+plot(gr_matchedTOallRatio_msd,[],"./figures/MatchedToAllRatio_msoftdrop.pdf")
+
 for i in range(4):
-    if options.msoftdrop:
-        plot(boosted_higgs_graphsGenPart[i], boosted_higgs_graphsGenPart_BP[i], "Event_Selection_eff_%i_GenPart_msoftdrop.pdf"%i)
-        plot(boosted_higgs_graphsFatJet[i], boosted_higgs_graphsFatJet_BP[i], "Event_Selection_eff_%i_FatJet_msoftdrop.pdf"%i)
-    else:     
-        plot(boosted_higgs_graphsGenPart[i], boosted_higgs_graphsGenPart_BP[i], "Event_Selection_eff_%i_GenPart.pdf"%i)
-        plot(boosted_higgs_graphsFatJet[i], boosted_higgs_graphsFatJet_BP[i], "Event_Selection_eff_%i_FatJet.pdf"%i) 
+    plot(boosted_higgs_graphsGenPart[i], [], "./figures/Event_Selection_eff_%i_GenPart.pdf"%i)
+    plot(boosted_higgs_graphsFatJet[i], [], "./figures/Event_Selection_eff_%i_FatJet.pdf"%i) 
+
+    plot(boosted_higgs_graphsGenPart_msd[i], [], "./figures/Event_Selection_eff_%i_GenPart_msoftdrop.pdf"%i)
+    plot(boosted_higgs_graphsFatJet_msd[i], [], "./figures/Event_Selection_eff_%i_FatJet_msoftdrop.pdf"%i)
 
 #---------------------------------------------------------------------
