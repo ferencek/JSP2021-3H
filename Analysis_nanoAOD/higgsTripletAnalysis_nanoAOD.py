@@ -124,6 +124,10 @@ h_multiplicityN_higgs_candidates_unmatched = ROOT.TH1F("h_multiplicityN_higgs_ca
 h_multiplicityN_higgs_candidates = ROOT.TH1F("h_multiplicityN_higgs_candidates", "h_multiplicityN_higgs_candidates", 5,-0.5,4.5)
 h_multiplicityN_higgs_candidates_boosted = ROOT.TH1F("h_multiplicityN_higgs_candidates_boosted", "h_multiplicityN_higgs_candidates_boosted", 5,-0.5,4.5)
 
+h_multiplicityN_higgs_candidates_deeptag = ROOT.TH1F("h_multiplicityN_higgs_candidates_deeptag", "h_multiplicityN_higgs_candidates_deeptag", 5,-0.5,4.5)
+h_multiplicityN_higgs_candidates_matched_deeptag = ROOT.TH1F("h_multiplicityN_higgs_candidates_matched_deeptag", "h_multiplicityN_higgs_candidates_matched_deeptag", 5,-0.5,4.5)
+h_multiplicityN_higgs_candidates_unmatched_deeptag = ROOT.TH1F("h_multiplicityN_higgs_candidates_unmatched_deeptag", "h_multiplicityN_higgs_candidates_unmatched_deeptag", 5,-0.5,4.5)
+
 h_msoftdrop = ROOT.TH1F("h_msoftdrop", "soft drop mass",500,0,500)
 h_msoftdrop_vs_massjet = ROOT.TH2F("h_msoftdrop_vs_massjet", ";m_{jet} [GeV]; m_{softdrop} [GeV]",500,0,500,500,0,500)
 
@@ -205,6 +209,10 @@ for i,e in enumerate(events):
     higgs_candidatesList_unmatched=[]
     jets_matched=[]
 
+    higgs_candidatesList_deeptag=[]
+    higgs_candidatesList_matched_deeptag=[]
+    higgs_candidatesList_unmatched_deeptag=[]
+
     # empty Lorentz4vector for calculating rapidity
     jetVec = ROOT.TLorentzVector()
     hVec   = ROOT.TLorentzVector()
@@ -223,9 +231,13 @@ for i,e in enumerate(events):
         if options.msoftdrop:
             if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
                 higgs_candidatesList.append(j)
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+                higgs_candidatesList_deeptag.append(j)
         else:
             if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
                 higgs_candidatesList.append(j)
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 85 and e.FatJet_mass[j] < 135 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+                higgs_candidatesList_deeptag.append(j)
 
         for h in higgsList:    
             hVec.SetPtEtaPhiM(e.GenPart_pt[h],e.GenPart_eta[h],e.GenPart_phi[h],e.GenPart_mass[h])
@@ -271,10 +283,13 @@ for i,e in enumerate(events):
                 if options.msoftdrop:
                     if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
                         higgs_candidatesList_matched.append(j)
+                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+                        higgs_candidatesList_matched_deeptag.append(j)
                 else:
                     if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
                         higgs_candidatesList_matched.append(j)
-
+                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+                        higgs_candidatesList_matched_deeptag.append(j)
                 break
 
         # unmatched
@@ -290,20 +305,30 @@ for i,e in enumerate(events):
             if options.msoftdrop:
                 if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
                     higgs_candidatesList_unmatched.append(j)
+                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+                        higgs_candidatesList_unmatched_deeptag.append(j)
             else:
                 if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
                     higgs_candidatesList_unmatched.append(j)
+                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 85 and e.FatJet_mass[j] < 135 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+                        higgs_candidatesList_unmatched_deeptag.append(j)
 
     # print(len(higgs_candidatesList_matched)+len(higgs_candidatesList_unmatched)-len(higgs_candidatesList))
     # print(higgs_candidatesList_unmatched)
     # print(higgs_candidatesList_matched)
     # print(higgs_candidatesList)
 
+    # level - fatjet
+    h_multiplicityN_higgs_candidates.Fill(len(higgs_candidatesList))
     h_multiplicityN_higgs_candidates_matched.Fill(len(higgs_candidatesList_matched))
     h_multiplicityN_higgs_candidates_unmatched.Fill(len(higgs_candidatesList_unmatched))
 
-    h_multiplicityN_higgs_candidates.Fill(len(higgs_candidatesList)) # number of FatJets that are matched to higgs and satisfy above conditions
-    h_multiplicityN_higgs_candidates_boosted.Fill(higgscount) # number of GenPart that have eta<2 (i.e. can be seen in detector) and DeltaR<0.8 (i.e. its daughters bb are close) and satisfy above conditions
+    h_multiplicityN_higgs_candidates_deeptag.Fill(len(higgs_candidatesList_deeptag))
+    h_multiplicityN_higgs_candidates_matched_deeptag.Fill(len(higgs_candidatesList_matched_deeptag))
+    h_multiplicityN_higgs_candidates_unmatched_deeptag.Fill(len(higgs_candidatesList_unmatched_deeptag))
+    
+    # level - generator
+    h_multiplicityN_higgs_candidates_boosted.Fill(higgscount) 
     
 #print(nDaughters)
 
