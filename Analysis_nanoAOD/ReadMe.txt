@@ -30,8 +30,8 @@ python submitAnalysisJobs.py -o condor_nanoAOD_m[jet/softdrop] -s higgsTripletAn
 # To produce analysis plots
 python examplePoints_1D.py
 python examplePoints_2D.py
-python makePlots.py -o condor_nanoAOD_m[jet/softdrop]_TIMESTAMP [--msoftdrop]
-
+# Takes histograms with mjet AND msoftdrop analysis and produces (among others) comparison plots between mjet and msoftdrop
+python makePlots.py --omjet condor_nanoAOD_mjet_TIMESTAMP --omsoftdrop condor_nanoAOD_msoftdrop_TIMESTAMP
 
 # To check for missing files and get a list of failed mass points
 python checkAnalysisOutput.py path/to/output/files/
