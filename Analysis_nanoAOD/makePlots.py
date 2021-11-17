@@ -184,11 +184,21 @@ gr_FatJetUnmatchedParticleNet_msd = copy.deepcopy(r.TGraph2D())
 gr_msdTOmjetRatioMatched   = copy.deepcopy(r.TGraph2D()) # matched softdrop / matched mjet
 gr_msdTOmjetRatioUnmatched = copy.deepcopy(r.TGraph2D()) # unmatched softdrop / unmatched mjet
 
-gr_msdTOmjetRatioMatchedDeepTag   = copy.deepcopy(r.TGraph2D()) # matched softdrop / matched mjet
-gr_msdTOmjetRatioUnmatchedDeepTag = copy.deepcopy(r.TGraph2D()) # unmatched softdrop / unmatched mjet
+gr_DTmjetTOmjetRatioMatched = copy.deepcopy(r.TGraph2D()) # matched DT mjet / matched mjet
+gr_PNmjetTOmjetRatioMatched = copy.deepcopy(r.TGraph2D()) # matched PN mjet / matched mjet
+gr_DTmsdTOmsdRatioMatched   = copy.deepcopy(r.TGraph2D()) # matched DT msd / matched msd
+gr_PNmsdTOmsdRatioMatched   = copy.deepcopy(r.TGraph2D()) # matched Pn msd / matched msd
 
-gr_msdTOmjetRatioMatchedParticleNet   = copy.deepcopy(r.TGraph2D()) # matched softdrop / matched mjet
-gr_msdTOmjetRatioUnmatchedParticleNet = copy.deepcopy(r.TGraph2D()) # unmatched softdrop / unmatched mjet
+gr_DTmjetTOmjetRatioUnmatched = copy.deepcopy(r.TGraph2D()) # matched DT mjet / matched mjet
+gr_PNmjetTOmjetRatioUnmatched = copy.deepcopy(r.TGraph2D()) # matched PN mjet / matched mjet
+gr_DTmsdTOmsdRatioUnmatched   = copy.deepcopy(r.TGraph2D()) # matched DT msd / matched msd
+gr_PNmsdTOmsdRatioUnmatched   = copy.deepcopy(r.TGraph2D()) # matched Pn msd / matched msd
+
+# gr_msdTOmjetRatioMatchedDeepTag   = copy.deepcopy(r.TGraph2D()) # matched softdrop / matched mjet
+# gr_msdTOmjetRatioUnmatchedDeepTag = copy.deepcopy(r.TGraph2D()) # unmatched softdrop / unmatched mjet
+
+# gr_msdTOmjetRatioMatchedParticleNet   = copy.deepcopy(r.TGraph2D()) # matched softdrop / matched mjet
+# gr_msdTOmjetRatioUnmatchedParticleNet = copy.deepcopy(r.TGraph2D()) # unmatched softdrop / unmatched mjet
 
 gr_matchedTOallRatio     = copy.deepcopy(r.TGraph2D()) # matched / all 
 gr_matchedTOallRatio_msd = copy.deepcopy(r.TGraph2D()) # matched / all with softdrop mass
@@ -229,11 +239,21 @@ gr_FatJetUnmatchedParticleNet_msd.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Fraction of
 gr_msdTOmjetRatioMatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (matched)")
 gr_msdTOmjetRatioUnmatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (unmatched)")
 
-gr_msdTOmjetRatioMatchedDeepTag.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (matched)")
-gr_msdTOmjetRatioUnmatchedDeepTag.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (unmatched)")
+gr_DTmjetTOmjetRatioMatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];DeepTag jet mass over jet mass ratio (matched)")
+gr_PNmjetTOmjetRatioMatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];ParticleNet jet mass over jer mass ratio (matched)")
+gr_DTmsdTOmsdRatioMatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];DeepTag soft drop mass over soft drop mass (matched)")
+gr_PNmsdTOmsdRatioMatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];ParticleNet soft drop mass over soft drop mass (matched)")
 
-gr_msdTOmjetRatioMatchedParticleNet.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (matched)")
-gr_msdTOmjetRatioUnmatchedParticleNet.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (unmatched)")
+gr_DTmjetTOmjetRatioUnmatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];DeepTag jet mass over jet mass ratio (unmatched)")
+gr_PNmjetTOmjetRatioUnmatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];ParticleNet jer mass over jet mass ratio (unmatched)")
+gr_DTmsdTOmsdRatioUnmatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];DeepTag soft drop mass over soft drop mass ratio (unmatched)")
+gr_PNmsdTOmsdRatioUnmatched.SetTitle(";m_{X} [TeV];m_{Y} [TeV];ParticleNet soft drop mass over soft drop mass ratio (unmatched)")
+
+# gr_msdTOmjetRatioMatchedDeepTag.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (matched)")
+# gr_msdTOmjetRatioUnmatchedDeepTag.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (unmatched)")
+
+# gr_msdTOmjetRatioMatchedParticleNet.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (matched)")
+# gr_msdTOmjetRatioUnmatchedParticleNet.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Softdrop mass over jet mass ratio (unmatched)")
 
 gr_matchedTOallRatio.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Ratio of matched over all (mjet)")
 gr_matchedTOallRatio_msd.SetTitle(";m_{X} [TeV];m_{Y} [TeV];Ratio of matched over all (msoftdrop)")
@@ -419,16 +439,28 @@ for mX in range(mX_min, mX_max + mX_step, mX_step):
         # ratios
         gr_msdTOmjetRatioMatched.SetPoint(n,mX,mY,frac_FatJetMatched_msd/frac_FatJetMatched)
         gr_msdTOmjetRatioUnmatched.SetPoint(n,mX,mY,frac_FatJetUnmatched_msd/frac_FatJetUnmatched)   
+
+        gr_DTmjetTOmjetRatioMatched.SetPoint(n,mX,mY,frac_FatJetMatchedDeepTag / frac_FatJetMatched)
+        gr_PNmjetTOmjetRatioMatched.SetPoint(n,mX,mY,frac_FatJetMatchedParticleNet / frac_FatJetMatched)
+        gr_DTmsdTOmsdRatioMatched.SetPoint(n,mX,mY,frac_FatJetMatchedDeepTag_msd / frac_FatJetMatched_msd)
+        gr_PNmsdTOmsdRatioMatched.SetPoint(n,mX,mY,frac_FatJetMatchedParticleNet_msd / frac_FatJetMatched_msd)
+
+        gr_DTmjetTOmjetRatioUnmatched.SetPoint(n,mX,mY,frac_FatJetUnmatchedDeepTag / frac_FatJetUnmatched)
+        gr_PNmjetTOmjetRatioUnmatched.SetPoint(n,mX,mY,frac_FatJetUnmatchedParticleNet / frac_FatJetUnmatched)
+        gr_DTmsdTOmsdRatioUnmatched.SetPoint(n,mX,mY,frac_FatJetUnmatchedDeepTag_msd / frac_FatJetUnmatched_msd)
+        gr_PNmsdTOmsdRatioUnmatched.SetPoint(n,mX,mY,frac_FatJetUnmatchedParticleNet_msd / frac_FatJetUnmatched_msd)
+
+        # gr_msdTOmjetRatioMatchedDeepTag.SetPoint(n,mX,mY,frac_FatJetMatchedDeepTag_msd/frac_FatJetMatchedDeepTag)
+        # gr_msdTOmjetRatioUnmatchedDeepTag.SetPoint(n,mX,mY,frac_FatJetUnmatchedDeepTag_msd/frac_FatJetUnmatchedDeepTag)   
+        # gr_msdTOmjetRatioMatchedParticleNet.SetPoint(n,mX,mY,frac_FatJetMatchedParticleNet_msd/frac_FatJetMatchedParticleNet)
+        # gr_msdTOmjetRatioUnmatchedParticleNet.SetPoint(n,mX,mY,frac_FatJetUnmatchedParticleNet_msd/frac_FatJetUnmatchedParticleNet)   
+
         gr_matchedTOallRatio.SetPoint(n,mX,mY,frac_FatJetMatched/frac_FatJet)
         gr_matchedTOallRatio_msd.SetPoint(n,mX,mY,frac_FatJetMatched_msd/frac_FatJet_msd)
 
-        gr_msdTOmjetRatioMatchedDeepTag.SetPoint(n,mX,mY,frac_FatJetMatchedDeepTag_msd/frac_FatJetMatchedDeepTag)
-        gr_msdTOmjetRatioUnmatchedDeepTag.SetPoint(n,mX,mY,frac_FatJetUnmatchedDeepTag_msd/frac_FatJetUnmatchedDeepTag)   
         gr_matchedTOallRatioDeepTag.SetPoint(n,mX,mY,frac_FatJetMatchedDeepTag/frac_FatJetDeepTag)
         gr_matchedTOallRatioDeepTag_msd.SetPoint(n,mX,mY,frac_FatJetMatchedDeepTag_msd/frac_FatJetDeepTag_msd)
 
-        gr_msdTOmjetRatioMatchedParticleNet.SetPoint(n,mX,mY,frac_FatJetMatchedParticleNet_msd/frac_FatJetMatchedParticleNet)
-        gr_msdTOmjetRatioUnmatchedParticleNet.SetPoint(n,mX,mY,frac_FatJetUnmatchedParticleNet_msd/frac_FatJetUnmatchedParticleNet)   
         gr_matchedTOallRatioParticleNet.SetPoint(n,mX,mY,frac_FatJetMatchedParticleNet/frac_FatJetParticleNet)
         gr_matchedTOallRatioParticleNet_msd.SetPoint(n,mX,mY,frac_FatJetMatchedParticleNet_msd/frac_FatJetParticleNet_msd)
 
@@ -536,16 +568,28 @@ plot(gr_FatJetUnmatchedParticleNet_msd,[],"./figs/figsMsoftdrop/BoostedHiggsFrac
 
 plot(gr_msdTOmjetRatioMatched,[],"./figs/figsRatios/msdTOmjetRatioMatched.pdf")
 plot(gr_msdTOmjetRatioUnmatched,[],"./figs/figsRatios/msdTOmjetRatioUnmatched.pdf")
+
+# plot(gr_msdTOmjetRatioMatchedDeepTag,[],"./figs/figsRatios/msdTOmjetRatioMatchedDeepTag.pdf")
+# plot(gr_msdTOmjetRatioUnmatchedDeepTag,[],"./figs/figsRatios/msdTOmjetRatioUnmatchedDeepTag.pdf")
+# plot(gr_msdTOmjetRatioMatchedParticleNet,[],"./figs/figsRatios/msdTOmjetRatioMatchedParticleNet.pdf")
+# plot(gr_msdTOmjetRatioUnmatchedParticleNet,[],"./figs/figsRatios/msdTOmjetRatioUnmatchedparticleNet.pdf")
+
+plot(gr_DTmjetTOmjetRatioMatched,[],"./figs/figsRatios/DTmjetTOmjetRatioMatched.pdf")
+plot(gr_PNmjetTOmjetRatioMatched,[],"./figs/figsRatios/PNmjetTOmjetRatioMatched.pdf")
+plot(gr_DTmsdTOmsdRatioMatched,[],"./figs/figsRatios/DTmsdTOmsdRatioMatched.pdf")
+plot(gr_PNmsdTOmsdRatioMatched,[],"./figs/figsRatios/PNmsdTOmsdRatioMathced.pdf")
+
+plot(gr_DTmjetTOmjetRatioUnmatched,[],"./figs/figsRatios/DTmjetTOmjetRatioUnmatched.pdf")
+plot(gr_PNmjetTOmjetRatioUnmatched,[],"./figs/figsRatios/PNmjetTomjetRatioUnmatched.pdf")
+plot(gr_DTmsdTOmsdRatioUnmatched,[],"./figs/figsRatios/DTmsdTOmsdRatioUnmatched.pdf")
+plot(gr_PNmsdTOmsdRatioUnmatched,[],"./figs/figsRatios/PNmsdTOmsdRatioUnmatched.pdf")
+
 plot(gr_matchedTOallRatio,[],"./figs/figsRatios/MatchedToAllRatio.pdf")
 plot(gr_matchedTOallRatio_msd,[],"./figs/figsRatios/MatchedToAllRatio_msoftdrop.pdf")
 
-plot(gr_msdTOmjetRatioMatchedDeepTag,[],"./figs/figsRatios/msdTOmjetRatioMatchedDeepTag.pdf")
-plot(gr_msdTOmjetRatioUnmatchedDeepTag,[],"./figs/figsRatios/msdTOmjetRatioUnmatchedDeepTag.pdf")
 plot(gr_matchedTOallRatioDeepTag,[],"./figs/figsRatios/MatchedToAllRatioDeepTag.pdf")
 plot(gr_matchedTOallRatioDeepTag_msd,[],"./figs/figsRatios/MatchedToAllRatioDeepTag_msoftdrop.pdf")
 
-plot(gr_msdTOmjetRatioMatchedParticleNet,[],"./figs/figsRatios/msdTOmjetRatioMatchedParticleNet.pdf")
-plot(gr_msdTOmjetRatioUnmatchedParticleNet,[],"./figs/figsRatios/msdTOmjetRatioUnmatchedparticleNet.pdf")
 plot(gr_matchedTOallRatioParticleNet,[],"./figs/figsRatios/MatchedToAllRatioParticleNet.pdf")
 plot(gr_matchedTOallRatioParticleNet_msd,[],"./figs/figsRatios/MatchedToAllRatioParticleNet_msoftdrop.pdf")
 

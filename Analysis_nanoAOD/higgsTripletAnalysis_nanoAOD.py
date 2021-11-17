@@ -136,6 +136,17 @@ h_HCands_unmatched_particlenet = ROOT.TH1F("h_HCands_unmatched_particlenet", "h_
 h_msoftdrop = ROOT.TH1F("h_msoftdrop", "soft drop mass",500,0,500)
 h_msoftdrop_vs_massjet = ROOT.TH2F("h_msoftdrop_vs_massjet", ";m_{jet} [GeV]; m_{softdrop} [GeV]",500,0,500,500,0,500)
 
+h_deeptag           = ROOT.TH1F("h_deeptag", "deeptag for all",100,-1,2)
+h_deeptag_matched   = ROOT.TH1F("h_deeptag_matched", "deeptag for matched",100,-1,2)
+h_deeptag_unmatched = ROOT.TH1F("h_deeptag_unmatched", "deeptag for unmatched",100,-1,2)
+h_particlenet           = ROOT.TH1F("h_particlenet", "particlenet for all",100,-1,2)
+h_particlenet_matched   = ROOT.TH1F("h_particlenet_matched","particlenet for matched",100,-1,2)
+h_particlenet_unmatched = ROOT.TH1F("h_particlenet_unmatched","particlenet for unmatched",100,-1,2) 
+
+h_DTvsPN = ROOT.TH2F("h_DTvsPN","deeptag vs particlenet for all",100,-1,2,100,-1,2)
+h_DTvsPN_matched = ROOT.TH2F("h_DTvsPN_matched","deeptag vs particlenet for matched",100,-1,2,100,-1,2)
+h_DTvsPN_unmatched = ROOT.TH2F("h_DTvsPN_unmatched","deeptag vs particlenet for unmatched",100,-1,2,100,-1,2)
+
 # input file
 ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/NANOAOD/TRSM_XToHY_6b_M3_%i_M2_%i_NANOAOD.root" % (options.mX, options.mY)
 if options.massPoint:
@@ -238,9 +249,13 @@ for i,e in enumerate(events):
         h_msoftdrop_vs_massjet.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
 
         if (e.FatJet_particleNetMD_Xbb[j] + e.FatJet_particleNetMD_QCD[j]) == 0:
-            FatJet_particleNetMD_XbbvsQCD = 9999
+            FatJet_particleNetMD_XbbvsQCD = -1
         else:
             FatJet_particleNetMD_XbbvsQCD = e.FatJet_particleNetMD_Xbb[j] / (e.FatJet_particleNetMD_Xbb[j] + e.FatJet_particleNetMD_QCD[j])
+
+        h_deeptag.Fill(e.FatJet_deepTagMD_HbbvsQCD[j])
+        h_particlenet.Fill(FatJet_particleNetMD_XbbvsQCD)
+        h_DTvsPN.Fill(e.FatJet_deepTagMD_HbbvsQCD[j],FatJet_particleNetMD_XbbvsQCD)
 
         if options.msoftdrop:
             if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
@@ -281,6 +296,10 @@ for i,e in enumerate(events):
 
                 h_msoftdrop_matched.Fill(e.FatJet_msoftdrop[j])
                 h_msoftdrop_vs_massjet_matched.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
+
+                h_deeptag_matched.Fill(e.FatJet_deepTagMD_HbbvsQCD[j])
+                h_particlenet_matched.Fill(FatJet_particleNetMD_XbbvsQCD)
+                h_DTvsPN_matched.Fill(e.FatJet_deepTagMD_HbbvsQCD[j],FatJet_particleNetMD_XbbvsQCD)
 
                 dIndex = findDaughters(h,allPart)
         
@@ -326,6 +345,10 @@ for i,e in enumerate(events):
             h_msoftdrop_unmatched.Fill(e.FatJet_msoftdrop[j])
             h_msoftdrop_vs_massjet_unmatched.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
             
+            h_deeptag_unmatched.Fill(e.FatJet_deepTagMD_HbbvsQCD[j])
+            h_particlenet_unmatched.Fill(FatJet_particleNetMD_XbbvsQCD)
+            h_DTvsPN_unmatched.Fill(e.FatJet_deepTagMD_HbbvsQCD[j],FatJet_particleNetMD_XbbvsQCD)
+
             if options.msoftdrop:
                 if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
                     HCandsList_unmatched.append(j)
