@@ -518,52 +518,52 @@ for mX in range(mX_min, mX_max + mX_step, mX_step):
 
 # creating folder structure
 try:
-    os.mkdir('figs')
+    os.mkdir('Yfigs')
 except OSError as error:
     pass
 try:
-    os.mkdir('figs/figsMjet')
+    os.mkdir('Yfigs/figsMjet')
 except OSError as error:
     pass
 try:
-    os.mkdir('figs/figsMjet/eff')
+    os.mkdir('Yfigs/figsMjet/eff')
 except OSError as error:
     pass
 try:
-    os.mkdir('figs/figsMsoftdrop')
+    os.mkdir('Yfigs/figsMsoftdrop')
 except OSError as error:
     pass
 try:
-    os.mkdir('figs/figsMsoftdrop/eff')
+    os.mkdir('Yfigs/figsMsoftdrop/eff')
 except OSError as error:
     pass
 try:
-    os.mkdir('figs/figsRatios')
+    os.mkdir('Yfigs/figsRatios')
 except OSError as error:
     pass
 
 # make plots
-plot(gr_GenPart, [], "./figs/figsMjet/BoostedHiggsFraction_GenPart.pdf")
-plot(gr_FatJet, [], "./figs/figsMjet/BoostedHiggsFraction_FatJet.pdf")
-plot(gr_FatJetMatched,[],"./figs/figsMjet/BoostedHiggsFraction_FatJet_matched.pdf")
-plot(gr_FatJetUnmatched,[],"./figs/figsMjet/BoostedHiggsFraction_FatJet_unmatched.pdf")
-plot(gr_FatJetDeepTag, [], "./figs/figsMjet/BoostedHiggsFraction_FatJet_Deeptag.pdf")
-plot(gr_FatJetMatchedDeepTag,[],"./figs/figsMjet/BoostedHiggsFraction_FatJet_DeepTag_matched.pdf")
-plot(gr_FatJetUnmatchedDeepTag,[],"./figs/figsMjet/BoostedHiggsFraction_FatJet__DeepTag_unmatched.pdf")
-plot(gr_FatJetParticleNet, [], "./figs/figsMjet/BoostedHiggsFraction_FatJet_ParticleNet.pdf")
-plot(gr_FatJetMatchedParticleNet,[],"./figs/figsMjet/BoostedHiggsFraction_FatJet_ParticleNet_matched.pdf")
-plot(gr_FatJetUnmatchedParticleNet,[],"./figs/figsMjet/BoostedHiggsFraction_FatJet_ParticleNet_unmatched.pdf")
+plot(gr_GenPart, [], "./figs/figsMjet/BoostedYFraction_GenPart.pdf")
+plot(gr_FatJet, [], "./figs/figsMjet/BoostedYFraction_FatJet.pdf")
+plot(gr_FatJetMatched,[],"./figs/figsMjet/BoostedYFraction_FatJet_matched.pdf")
+plot(gr_FatJetUnmatched,[],"./figs/figsMjet/BoostedYFraction_FatJet_unmatched.pdf")
+plot(gr_FatJetDeepTag, [], "./figs/figsMjet/BoostedYFraction_FatJet_Deeptag.pdf")
+plot(gr_FatJetMatchedDeepTag,[],"./figs/figsMjet/BoostedYFraction_FatJet_DeepTag_matched.pdf")
+plot(gr_FatJetUnmatchedDeepTag,[],"./figs/figsMjet/BoostedYFraction_FatJet__DeepTag_unmatched.pdf")
+plot(gr_FatJetParticleNet, [], "./figs/figsMjet/BoostedYFraction_FatJet_ParticleNet.pdf")
+plot(gr_FatJetMatchedParticleNet,[],"./figs/figsMjet/BoostedYFraction_FatJet_ParticleNet_matched.pdf")
+plot(gr_FatJetUnmatchedParticleNet,[],"./figs/figsMjet/BoostedYFraction_FatJet_ParticleNet_unmatched.pdf")
 
-plot(gr_GenPart_msd, [], "./figs/figsMsoftdrop/BoostedHiggsFraction_GenPart_msoftdrop.pdf")
-plot(gr_FatJet_msd, [], "./figs/figsMsoftdrop/BoostedHiggsFraction_FatJet_msoftdrop.pdf")
-plot(gr_FatJetMatched_msd,[],"./figs/figsMsoftdrop/BoostedHiggsFraction_FatJet_matched_msoftdrop.pdf")
-plot(gr_FatJetUnmatched_msd,[],"./figs/figsMsoftdrop/BoostedHiggsFraction_FatJet_unmatched_msoftdrop.pdf")
-plot(gr_FatJetDeepTag_msd, [], "./figs/figsMsoftdrop/BoostedHiggsFraction_FatJet_DeepTag_msoftdrop.pdf")
-plot(gr_FatJetMatchedDeepTag_msd,[],"./figs/figsMsoftdrop/BoostedHiggsFraction_FatJet_DeepTag_matched_msoftdrop.pdf")
-plot(gr_FatJetUnmatchedDeepTag_msd,[],"./figs/figsMsoftdrop/BoostedHiggsFraction_FatJet_DeepTag_unmatched_msoftdrop.pdf")
-plot(gr_FatJetParticleNet_msd, [], "./figs/figsMsoftdrop/BoostedHiggsFraction_FatJet_Particlenet_msoftdrop.pdf")
-plot(gr_FatJetMatchedParticleNet_msd,[],"./figs/figsMsoftdrop/BoostedHiggsFraction_FatJet_ParticleNet_matched_msoftdrop.pdf")
-plot(gr_FatJetUnmatchedParticleNet_msd,[],"./figs/figsMsoftdrop/BoostedHiggsFraction_FatJet_ParticleNet_unmatched_msoftdrop.pdf")
+plot(gr_GenPart_msd, [], "./figs/figsMsoftdrop/BoostedYFraction_GenPart_msoftdrop.pdf")
+plot(gr_FatJet_msd, [], "./figs/figsMsoftdrop/BoostedYFraction_FatJet_msoftdrop.pdf")
+plot(gr_FatJetMatched_msd,[],"./figs/figsMsoftdrop/BoostedYFraction_FatJet_matched_msoftdrop.pdf")
+plot(gr_FatJetUnmatched_msd,[],"./figs/figsMsoftdrop/BoostedYFraction_FatJet_unmatched_msoftdrop.pdf")
+plot(gr_FatJetDeepTag_msd, [], "./figs/figsMsoftdrop/BoostedYFraction_FatJet_DeepTag_msoftdrop.pdf")
+plot(gr_FatJetMatchedDeepTag_msd,[],"./figs/figsMsoftdrop/BoostedYFraction_FatJet_DeepTag_matched_msoftdrop.pdf")
+plot(gr_FatJetUnmatchedDeepTag_msd,[],"./figs/figsMsoftdrop/BoostedYFraction_FatJet_DeepTag_unmatched_msoftdrop.pdf")
+plot(gr_FatJetParticleNet_msd, [], "./figs/figsMsoftdrop/BoostedYFraction_FatJet_Particlenet_msoftdrop.pdf")
+plot(gr_FatJetMatchedParticleNet_msd,[],"./figs/figsMsoftdrop/BoostedYFraction_FatJet_ParticleNet_matched_msoftdrop.pdf")
+plot(gr_FatJetUnmatchedParticleNet_msd,[],"./figs/figsMsoftdrop/BoostedYFraction_FatJet_ParticleNet_unmatched_msoftdrop.pdf")
 
 plot(gr_msdTOmjetRatioMatched,[],"./figs/figsRatios/msdTOmjetRatioMatched.pdf")
 plot(gr_msdTOmjetRatioUnmatched,[],"./figs/figsRatios/msdTOmjetRatioUnmatched.pdf")
