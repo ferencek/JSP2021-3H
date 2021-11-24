@@ -253,18 +253,18 @@ for i,e in enumerate(events):
         h_DTvsPN.Fill(e.FatJet_deepTagMD_HbbvsQCD[j],FatJet_particleNetMD_XbbvsQCD)
 
         if options.msoftdrop:
-            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 185 and e.FatJet_msoftdrop[j] < 285):
                 HCandsList.append(j)
-            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 185 and e.FatJet_msoftdrop[j] < 285 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
                 HCandsList_deeptag.append(j)
-            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135 and FatJet_particleNetMD_XbbvsQCD > 0.9):
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 185 and e.FatJet_msoftdrop[j] < 285 and FatJet_particleNetMD_XbbvsQCD > 0.9):
                 HCandsList_particlenet.append(j)
         else:
-            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 200 and e.FatJet_mass[j] < 300):
                 HCandsList.append(j)
-            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 200 and e.FatJet_mass[j] < 300 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
                 HCandsList_deeptag.append(j)
-            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and FatJet_particleNetMD_XbbvsQCD > 0.9):
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 200 and e.FatJet_mass[j] < 300 and FatJet_particleNetMD_XbbvsQCD > 0.9):
                 HCandsList_particlenet.append(j)
 
         for h in higgsList:    
@@ -313,19 +313,19 @@ for i,e in enumerate(events):
                 h_DeltaR_vs_higgs_pt.Fill(e.GenPart_pt[h],DeltaR)
 
                 if options.msoftdrop:
-                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
+                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 185 and e.FatJet_msoftdrop[j] < 285):
                         HCandsList_matched.append(j)
-                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 185 and e.FatJet_msoftdrop[j] < 285 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
                         HCandsList_matched_deeptag.append(j)
-                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135 and FatJet_particleNetMD_XbbvsQCD > 0.9):
+                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 185 and e.FatJet_msoftdrop[j] < 285 and FatJet_particleNetMD_XbbvsQCD > 0.9):
                         HCandsList_matched_particlenet.append(j)
 
                 else:
-                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
+                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 200 and e.FatJet_mass[j] < 300):
                         HCandsList_matched.append(j)
-                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 200 and e.FatJet_mass[j] < 300 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
                         HCandsList_matched_deeptag.append(j)
-                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and FatJet_particleNetMD_XbbvsQCD > 0.9):
+                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 200 and e.FatJet_mass[j] < 300 and FatJet_particleNetMD_XbbvsQCD > 0.9):
                         HCandsList_matched_particlenet.append(j)
 
                 break
@@ -345,19 +345,19 @@ for i,e in enumerate(events):
             h_DTvsPN_unmatched.Fill(e.FatJet_deepTagMD_HbbvsQCD[j],FatJet_particleNetMD_XbbvsQCD)
 
             if options.msoftdrop:
-                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135):
+                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 185 and e.FatJet_msoftdrop[j] < 285):
                     HCandsList_unmatched.append(j)
-                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 185 and e.FatJet_msoftdrop[j] < 285 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
                     HCandsList_unmatched_deeptag.append(j)
-                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 85 and e.FatJet_msoftdrop[j] < 135 and FatJet_particleNetMD_XbbvsQCD > 0.9):
+                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_msoftdrop[j] > 185 and e.FatJet_msoftdrop[j] < 285 and FatJet_particleNetMD_XbbvsQCD > 0.9):
                     HCandsList_unmatched_particlenet.append(j)
 
             else:
-                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
+                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 200 and e.FatJet_mass[j] < 300):
                     HCandsList_unmatched.append(j)
-                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 200 and e.FatJet_mass[j] < 300 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
                     HCandsList_unmatched_deeptag.append(j)
-                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and FatJet_particleNetMD_XbbvsQCD > 0.9):
+                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 200 and e.FatJet_mass[j] < 300 and FatJet_particleNetMD_XbbvsQCD > 0.9):
                     HCandsList_unmatched_particlenet.append(j)
 
     # level - fatjet
