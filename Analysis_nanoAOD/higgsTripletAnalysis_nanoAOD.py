@@ -120,10 +120,10 @@ h_max_DR_vs_higgs_pt = ROOT.TH2F("h_max_DR_vs_higgs_pt", ";p^{Higgs}_{T} [GeV];#
 h_higgs_pt_all= ROOT.TH1F("h_higgs_pt_all", ";p^{Higgs}_{T} [GeV]",300,0,2000)
 h_DeltaR_bb_vs_higgspt = ROOT.TH2F("h_DeltaR_bb_vs_higgspt", ";p^{Higgs}_{T} [GeV];#DeltaR(b,b)",300,100,1500,300,0,1.5)
 
+h_HCands_GenPart = ROOT.TH1F("h_HCands_GenPart", "h_HCands_GenPart", 5,-0.5,4.5)
+h_HCands = ROOT.TH1F("h_HCands", "h_HCands", 5,-0.5,4.5)
 h_HCands_matched = ROOT.TH1F("h_HCands_matched", "h_HCands_matched", 5,-0.5,4.5)
 h_HCands_unmatched = ROOT.TH1F("h_HCands_unmatched", "h_HCands_unmatched", 5,-0.5,4.5)
-h_HCands = ROOT.TH1F("h_HCands", "h_HCands", 5,-0.5,4.5)
-h_HCands_boosted = ROOT.TH1F("h_HCands_boosted", "h_HCands_boosted", 5,-0.5,4.5)
 
 h_HCands_deeptag = ROOT.TH1F("h_HCands_deeptag", "h_HCands_deeptag", 5,-0.5,4.5)
 h_HCands_matched_deeptag = ROOT.TH1F("h_HCands_matched_deeptag", "h_HCands_matched_deeptag", 5,-0.5,4.5)
@@ -253,6 +253,8 @@ for i,e in enumerate(events):
         else:
             FatJet_particleNetMD_XbbvsQCD = e.FatJet_particleNetMD_Xbb[j] / (e.FatJet_particleNetMD_Xbb[j] + e.FatJet_particleNetMD_QCD[j])
 
+        #print("all", e.FatJet_deepTagMD_HbbvsQCD[j]) # test
+
         h_deeptag.Fill(e.FatJet_deepTagMD_HbbvsQCD[j])
         h_particlenet.Fill(FatJet_particleNetMD_XbbvsQCD)
         h_DTvsPN.Fill(e.FatJet_deepTagMD_HbbvsQCD[j],FatJet_particleNetMD_XbbvsQCD)
@@ -267,9 +269,9 @@ for i,e in enumerate(events):
         else:
             if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
                 HCandsList.append(j)
-            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 85 and e.FatJet_mass[j] < 135 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
                 HCandsList_deeptag.append(j)
-            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 85 and e.FatJet_mass[j] < 135 and FatJet_particleNetMD_XbbvsQCD > 0.9):
+            if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and FatJet_particleNetMD_XbbvsQCD > 0.9):
                 HCandsList_particlenet.append(j)
 
         for h in higgsList:    
@@ -296,6 +298,8 @@ for i,e in enumerate(events):
 
                 h_msoftdrop_matched.Fill(e.FatJet_msoftdrop[j])
                 h_msoftdrop_vs_massjet_matched.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
+
+                #print("matched ",e.FatJet_deepTagMD_HbbvsQCD[j]) # test
 
                 h_deeptag_matched.Fill(e.FatJet_deepTagMD_HbbvsQCD[j])
                 h_particlenet_matched.Fill(FatJet_particleNetMD_XbbvsQCD)
@@ -330,7 +334,7 @@ for i,e in enumerate(events):
                         HCandsList_matched.append(j)
                     if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
                         HCandsList_matched_deeptag.append(j)
-                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 85 and e.FatJet_mass[j] < 135 and FatJet_particleNetMD_XbbvsQCD > 0.9):
+                    if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and FatJet_particleNetMD_XbbvsQCD > 0.9):
                         HCandsList_matched_particlenet.append(j)
 
                 break
@@ -345,6 +349,8 @@ for i,e in enumerate(events):
             h_msoftdrop_unmatched.Fill(e.FatJet_msoftdrop[j])
             h_msoftdrop_vs_massjet_unmatched.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
             
+            #print("unmatched ", e.FatJet_deepTagMD_HbbvsQCD[j])
+
             h_deeptag_unmatched.Fill(e.FatJet_deepTagMD_HbbvsQCD[j])
             h_particlenet_unmatched.Fill(FatJet_particleNetMD_XbbvsQCD)
             h_DTvsPN_unmatched.Fill(e.FatJet_deepTagMD_HbbvsQCD[j],FatJet_particleNetMD_XbbvsQCD)
@@ -360,9 +366,9 @@ for i,e in enumerate(events):
             else:
                 if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150):
                     HCandsList_unmatched.append(j)
-                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 85 and e.FatJet_mass[j] < 135 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
+                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and e.FatJet_deepTagMD_HbbvsQCD[j] > 0.8):
                     HCandsList_unmatched_deeptag.append(j)
-                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 85 and e.FatJet_mass[j] < 135 and FatJet_particleNetMD_XbbvsQCD > 0.9):
+                if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and FatJet_particleNetMD_XbbvsQCD > 0.9):
                     HCandsList_unmatched_particlenet.append(j)
 
     # print(len(HCandsList_matched)+len(HCandsList_unmatched)-len(HCandsList))
@@ -384,7 +390,7 @@ for i,e in enumerate(events):
     h_HCands_unmatched_particlenet.Fill(len(HCandsList_unmatched_particlenet))   
     
     # level - generator
-    h_HCands_boosted.Fill(higgscount) 
+    h_HCands_GenPart.Fill(higgscount) 
     
 #print(nDaughters)
 
