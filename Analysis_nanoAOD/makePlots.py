@@ -280,15 +280,15 @@ mX_max  = 4000
 mX_step = 400
 mY_step = 400
 
-values = open('mass_point_values.txt', 'w')
-header = '{:3s}  {:^4s}  {:^4s}  {:8s}  {:11s}  {:5s}  {:9s}  {:5s}  {:9s}  {:5s}  {:9s}\n'.format('idx','mX','mY','frac_GenPart','frac_FatJet','eff_1','eff_jet_1','eff_2','eff_jet_2','eff_3','eff_jet_3')
-values.write(header)
-values.write('-' * (len(header)-1) + '\n')
+# values = open('mass_point_values.txt', 'w')
+# header = '{:3s}  {:^4s}  {:^4s}  {:8s}  {:11s}  {:5s}  {:9s}  {:5s}  {:9s}  {:5s}  {:9s}\n'.format('idx','mX','mY','frac_GenPart','frac_FatJet','eff_1','eff_jet_1','eff_2','eff_jet_2','eff_3','eff_jet_3')
+# values.write(header)
+# values.write('-' * (len(header)-1) + '\n')
 
 n = 0
 for mX in range(mX_min, mX_max + mX_step, mX_step):
     for mY in sorted(list(set([260,mX-140])) + range(300, mX-125, mY_step)):
-        values.write('{:>3d}  {:>4d}  {:>4d}'.format(n+1, mX, mY))
+        # values.write('{:>3d}  {:>4d}  {:>4d}'.format(n+1, mX, mY))
 
         readHist = "/users/ldulibic/nanoAODhiggs/Analysis_nanoAOD/"+options.condor_outputMjet+"/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i_FatJet.root" % (mX,mY)
         if options.withNu:
@@ -400,11 +400,7 @@ for mX in range(mX_min, mX_max + mX_step, mX_step):
         frac_FatJetUnmatchedDeepTag_msd     = float(nHCandsUnmatchedDeepTag_msd) / pt_all_msd.Integral(0, pt_all_msd.GetNbinsX()+1)
         frac_FatJetUnmatchedParticleNet_msd = float(nHCandsUnmatchedParticleNet_msd) / pt_all_msd.Integral(0, pt_all_msd.GetNbinsX()+1)
 
-        # print ("(mX, mY) = (%i, %i)" % (mX, mY))
-        # print (frac_GenPart)
-        # print (frac_FatJet)
-
-        values.write('    {:.3f}      {:.3f}   '.format(frac_GenPart, frac_FatJet))
+        # values.write('    {:.3f}      {:.3f}   '.format(frac_GenPart, frac_FatJet))
 
         # setting values for:
         # generator
@@ -450,11 +446,6 @@ for mX in range(mX_min, mX_max + mX_step, mX_step):
         gr_DTmsdTOmsdRatioUnmatched.SetPoint(n,mX,mY,frac_FatJetUnmatchedDeepTag_msd / frac_FatJetUnmatched_msd)
         gr_PNmsdTOmsdRatioUnmatched.SetPoint(n,mX,mY,frac_FatJetUnmatchedParticleNet_msd / frac_FatJetUnmatched_msd)
 
-        # gr_msdTOmjetRatioMatchedDeepTag.SetPoint(n,mX,mY,frac_FatJetMatchedDeepTag_msd/frac_FatJetMatchedDeepTag)
-        # gr_msdTOmjetRatioUnmatchedDeepTag.SetPoint(n,mX,mY,frac_FatJetUnmatchedDeepTag_msd/frac_FatJetUnmatchedDeepTag)   
-        # gr_msdTOmjetRatioMatchedParticleNet.SetPoint(n,mX,mY,frac_FatJetMatchedParticleNet_msd/frac_FatJetMatchedParticleNet)
-        # gr_msdTOmjetRatioUnmatchedParticleNet.SetPoint(n,mX,mY,frac_FatJetUnmatchedParticleNet_msd/frac_FatJetUnmatchedParticleNet)   
-
         gr_matchedTOallRatio.SetPoint(n,mX,mY,frac_FatJetMatched/frac_FatJet)
         gr_matchedTOallRatio_msd.SetPoint(n,mX,mY,frac_FatJetMatched_msd/frac_FatJet_msd)
 
@@ -475,11 +466,11 @@ for mX in range(mX_min, mX_max + mX_step, mX_step):
             boosted_higgs_graphsGenPart_msd[count].SetPoint(n, mX, mY, frac_GenPart)
             boosted_higgs_graphsFatJet_msd[count].SetPoint(n, mX, mY, frac_FatJet)
 
-            if count > 0: values.write('  {:.3f}    {:.3f}  '.format(frac_GenPart, frac_FatJet))
-        values.write('\n')
+            # if count > 0: values.write('  {:.3f}    {:.3f}  '.format(frac_GenPart, frac_FatJet))
+        # values.write('\n')
         n += 1
 
-values.close()
+# values.close()
 
 #---------------------------------------------------------------------
 # benchmark points
@@ -535,7 +526,15 @@ try:
 except OSError as error:
     pass
 try:
+    os.mkdir('figs/figsMjet/eff')
+except OSError as error:
+    pass
+try:
     os.mkdir('figs/figsMsoftdrop')
+except OSError as error:
+    pass
+try:
+    os.mkdir('figs/figsMsoftdrop/eff')
 except OSError as error:
     pass
 try:
@@ -569,11 +568,6 @@ plot(gr_FatJetUnmatchedParticleNet_msd,[],"./figs/figsMsoftdrop/BoostedHiggsFrac
 plot(gr_msdTOmjetRatioMatched,[],"./figs/figsRatios/msdTOmjetRatioMatched.pdf")
 plot(gr_msdTOmjetRatioUnmatched,[],"./figs/figsRatios/msdTOmjetRatioUnmatched.pdf")
 
-# plot(gr_msdTOmjetRatioMatchedDeepTag,[],"./figs/figsRatios/msdTOmjetRatioMatchedDeepTag.pdf")
-# plot(gr_msdTOmjetRatioUnmatchedDeepTag,[],"./figs/figsRatios/msdTOmjetRatioUnmatchedDeepTag.pdf")
-# plot(gr_msdTOmjetRatioMatchedParticleNet,[],"./figs/figsRatios/msdTOmjetRatioMatchedParticleNet.pdf")
-# plot(gr_msdTOmjetRatioUnmatchedParticleNet,[],"./figs/figsRatios/msdTOmjetRatioUnmatchedparticleNet.pdf")
-
 plot(gr_DTmjetTOmjetRatioMatched,[],"./figs/figsRatios/DTmjetTOmjetRatioMatched.pdf")
 plot(gr_PNmjetTOmjetRatioMatched,[],"./figs/figsRatios/PNmjetTOmjetRatioMatched.pdf")
 plot(gr_DTmsdTOmsdRatioMatched,[],"./figs/figsRatios/DTmsdTOmsdRatioMatched.pdf")
@@ -593,11 +587,10 @@ plot(gr_matchedTOallRatioDeepTag_msd,[],"./figs/figsRatios/MatchedToAllRatioDeep
 plot(gr_matchedTOallRatioParticleNet,[],"./figs/figsRatios/MatchedToAllRatioParticleNet.pdf")
 plot(gr_matchedTOallRatioParticleNet_msd,[],"./figs/figsRatios/MatchedToAllRatioParticleNet_msoftdrop.pdf")
 
-# for i in range(4):
-#     plot(boosted_higgs_graphsGenPart[i], [], "./figs/figsMjet/Event_Selection_eff_%i_GenPart.pdf"%i)
-#     plot(boosted_higgs_graphsFatJet[i], [], "./figs/figsMjet/Event_Selection_eff_%i_FatJet.pdf"%i) 
+for i in range(4):
+    plot(boosted_higgs_graphsGenPart[i], [], "./figs/figsMjet/eff/Event_Selection_eff_%i_GenPart.pdf"%i)
+    plot(boosted_higgs_graphsFatJet[i], [], "./figs/figsMjet/eff/Event_Selection_eff_%i_FatJet.pdf"%i) 
 
-#     plot(boosted_higgs_graphsGenPart_msd[i], [], "./figs/figsMsoftdrop/Event_Selection_eff_%i_GenPart_msoftdrop.pdf"%i)
-#     plot(boosted_higgs_graphsFatJet_msd[i], [], "./figs/figsMsoftdrop/Event_Selection_eff_%i_FatJet_msoftdrop.pdf"%i)
+    plot(boosted_higgs_graphsGenPart_msd[i], [], "./figs/figsMsoftdrop/eff/Event_Selection_eff_%i_GenPart_msoftdrop.pdf"%i)
+    plot(boosted_higgs_graphsFatJet_msd[i], [], "./figs/figsMsoftdrop/eff/Event_Selection_eff_%i_FatJet_msoftdrop.pdf"%i)
 
-#---------------------------------------------------------------------
