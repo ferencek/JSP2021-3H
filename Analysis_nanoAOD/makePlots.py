@@ -302,7 +302,7 @@ for mX in range(mX_min, mX_max + mX_step, mX_step):
 
         f.cd()
         pt_all  = f.Get('h_higgs_pt_all')   # all higgs in all events
-        boosted = f.Get('h_HCands_boosted') # gen part boosted higgs
+        boosted = f.Get('h_HCands_GenPart') # gen part boosted higgs
         candidates = f.Get("h_HCands")           # jet candidates for higgs
         matched    = f.Get('h_HCands_matched')   # jet candidates matched to higgs genpart
         unmatched  = f.Get('h_HCands_unmatched') # jet candidates not matched to higgs genpart 
@@ -315,7 +315,7 @@ for mX in range(mX_min, mX_max + mX_step, mX_step):
 
         g.cd()
         pt_all_msd = g.Get('h_higgs_pt_all')    # all higgs in all events
-        boosted_msd = g.Get('h_HCands_boosted') # gen part boosted higgs
+        boosted_msd = g.Get('h_HCands_GenPart') # gen part boosted higgs
         candidates_msd = g.Get("h_HCands")          # jet candidates for higgs
         matched_msd = g.Get('h_HCands_matched')     # jet candidates matched to higgs genpart
         unmatched_msd = g.Get('h_HCands_unmatched') # jet candidates not matched to higgs genpart
@@ -506,7 +506,7 @@ values.close()
 #         candidates = f.Get("h_HCands")
 #         h2_b = f.Get('h_DeltaR_bb_vs_higgspt')
 #         pt_all = f.Get('pt_all')
-#         boosted = f.Get('h_HCands_boosted')
+#         boosted = f.Get('h_HCands_GenPart')
 #         frac_GenPart = h2_b.Integral(0,h2_b.GetNbinsX()+1,0,h2_b.GetYaxis().FindBin(0.8)-1)/ pt_all.Integral(0,pt_all.GetNbinsX()+1)
 #         nHCands=0
 #         for i in range(1,5):
