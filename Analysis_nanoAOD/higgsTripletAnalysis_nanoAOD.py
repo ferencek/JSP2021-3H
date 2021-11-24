@@ -75,17 +75,10 @@ if options.withNu:
 if options.msoftdrop:
     histo_filename = histo_filename.replace(".root", "_msoftdrop.root")
 
-# # single output file for testing
-# histo_filename = "nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_2800_M2_700.root"
-
 f = ROOT.TFile(histo_filename, "RECREATE")
 f.cd()
 
 # define histograms
-h_jetmass = ROOT.TH1F("h_jetmass", "h_jetmass", 500,0,500)
-h_jetpt = ROOT.TH1F("h_jetpt", "h_jetpt", 250,0, 2500)
-h_jetphi = ROOT.TH1F("h_jetphi", "h_jetphi", 150,-4,4)
-h_jeteta = ROOT.TH1F("h_jeteta", "h_jeteta", 150,-4,4)
 
 h_higgsmass = ROOT.TH1F("h_higgsmass", "h_higgsmass", 500,0,500)
 h_higgspt = ROOT.TH1F("h_higgspt", "h_higgspt", 250,0, 2500)
@@ -97,18 +90,24 @@ h_higgspt_matched = ROOT.TH1F("h_higgspt_matched", "h_higgspt_matched", 250,0, 2
 h_higgsphi_matched = ROOT.TH1F("h_higgsphi_matched", "h_higgsphi_matched", 300,-4,4)
 h_higgseta_matched = ROOT.TH1F("h_higgseta_matched", "h_higgseta_matched", 300,-4,4)
 
+h_jetmass = ROOT.TH1F("h_jetmass", "h_jetmass", 500,0,500)
+h_jetpt = ROOT.TH1F("h_jetpt", "h_jetpt", 250,0, 2500)
+h_jetphi = ROOT.TH1F("h_jetphi", "h_jetphi", 150,-4,4)
+h_jeteta = ROOT.TH1F("h_jeteta", "h_jeteta", 150,-4,4)
+
 h_jetmass_matched = ROOT.TH1F("h_jetmass_matched", "h_jetmass_matched", 500,0,500)
 h_jetpt_matched = ROOT.TH1F("h_jetpt_matched", "h_jetpt_matched", 250,0, 2500)
 h_jetphi_matched = ROOT.TH1F("h_jetphi_matched", "h_jetphi_matched", 150,-4,4)
 h_jeteta_matched = ROOT.TH1F("h_jeteta_matched", "h_jeteta_matched", 150,-4,4)
-h_msoftdrop_matched = ROOT.TH1F("h_msoftdrop_matched", "h_msoftdrop_matched",500,0,500)
-h_msoftdrop_vs_massjet_matched = ROOT.TH2F("h_msoftdrop_vs_massjet_matched", ";m_{jet} [GeV]; m_{softdrop} [GeV]",500,0,500,500,0,500)
 
 h_jetmass_unmatched = ROOT.TH1F("h_jetmass_unmatched","h_jetmass_unmatched",500,0,500)
 h_jetpt_unmatched = ROOT.TH1F("h_jetpt_unmatched", "h_jetpt_unmatched", 250,0, 2500)
 h_jetphi_unmatched = ROOT.TH1F("h_jetphi_unmatched", "h_jetphi_unmatched", 150,-4,4)
 h_jeteta_unmatched = ROOT.TH1F("h_jeteta_unmatched", "h_jeteta_unmatched", 150,-4,4)
+
+h_msoftdrop_matched = ROOT.TH1F("h_msoftdrop_matched", "h_msoftdrop_matched",500,0,500)
 h_msoftdrop_unmatched = ROOT.TH1F("h_msoftdrop_unmatched", "h_msoftdrop_unmatched",500,0,500)
+h_msoftdrop_vs_massjet_matched = ROOT.TH2F("h_msoftdrop_vs_massjet_matched", ";m_{jet} [GeV]; m_{softdrop} [GeV]",500,0,500,500,0,500)
 h_msoftdrop_vs_massjet_unmatched = ROOT.TH2F("h_msoftdrop_vs_massjet_unmatched", ";m_{jet} [GeV]; m_{softdrop} [GeV]",500,0,500,500,0,500)
 
 h_jet_pt_vs_higgs_pt = ROOT.TH2F("h_jet_pt_vs_higgs_pt", ";p^{Higgs}_{T} [GeV];p^{jet}_{T} [GeV]", 300,-100,2400,300,0,2000)
@@ -120,7 +119,22 @@ h_max_DR_vs_higgs_pt = ROOT.TH2F("h_max_DR_vs_higgs_pt", ";p^{Higgs}_{T} [GeV];#
 h_higgs_pt_all= ROOT.TH1F("h_higgs_pt_all", ";p^{Higgs}_{T} [GeV]",300,0,2000)
 h_DeltaR_bb_vs_higgspt = ROOT.TH2F("h_DeltaR_bb_vs_higgspt", ";p^{Higgs}_{T} [GeV];#DeltaR(b,b)",300,100,1500,300,0,1.5)
 
+h_msoftdrop = ROOT.TH1F("h_msoftdrop", "soft drop mass",500,0,500)
+h_msoftdrop_vs_massjet = ROOT.TH2F("h_msoftdrop_vs_massjet", ";m_{jet} [GeV]; m_{softdrop} [GeV]",500,0,500,500,0,500)
+
+h_deeptag           = ROOT.TH1F("h_deeptag", "deeptag for all",300,-1,2)
+h_deeptag_matched   = ROOT.TH1F("h_deeptag_matched", "deeptag for matched",300,-1,2)
+h_deeptag_unmatched = ROOT.TH1F("h_deeptag_unmatched", "deeptag for unmatched",300,-1,2)
+h_particlenet           = ROOT.TH1F("h_particlenet", "particlenet for all",300,-1,2)
+h_particlenet_matched   = ROOT.TH1F("h_particlenet_matched","particlenet for matched",300,-1,2)
+h_particlenet_unmatched = ROOT.TH1F("h_particlenet_unmatched","particlenet for unmatched",300,-1,2) 
+
+h_DTvsPN = ROOT.TH2F("h_DTvsPN","deeptag vs particlenet for all",300,-1,2,300,-1,2)
+h_DTvsPN_matched = ROOT.TH2F("h_DTvsPN_matched","deeptag vs particlenet for matched",300,-1,2,300,-1,2)
+h_DTvsPN_unmatched = ROOT.TH2F("h_DTvsPN_unmatched","deeptag vs particlenet for unmatched",300,-1,2,300,-1,2)
+
 h_HCands_GenPart = ROOT.TH1F("h_HCands_GenPart", "h_HCands_GenPart", 5,-0.5,4.5)
+
 h_HCands = ROOT.TH1F("h_HCands", "h_HCands", 5,-0.5,4.5)
 h_HCands_matched = ROOT.TH1F("h_HCands_matched", "h_HCands_matched", 5,-0.5,4.5)
 h_HCands_unmatched = ROOT.TH1F("h_HCands_unmatched", "h_HCands_unmatched", 5,-0.5,4.5)
@@ -133,27 +147,10 @@ h_HCands_particlenet = ROOT.TH1F("h_HCands_particlenet", "h_HCands_particlenet",
 h_HCands_matched_particlenet = ROOT.TH1F("h_HCands_matched_particlenet", "h_HCands_matched_particlenet", 5,-0.5,4.5)
 h_HCands_unmatched_particlenet = ROOT.TH1F("h_HCands_unmatched_particlenet", "h_HCands_unmatched_particlenet", 5,-0.5,4.5)
 
-h_msoftdrop = ROOT.TH1F("h_msoftdrop", "soft drop mass",500,0,500)
-h_msoftdrop_vs_massjet = ROOT.TH2F("h_msoftdrop_vs_massjet", ";m_{jet} [GeV]; m_{softdrop} [GeV]",500,0,500,500,0,500)
-
-h_deeptag           = ROOT.TH1F("h_deeptag", "deeptag for all",100,-1,2)
-h_deeptag_matched   = ROOT.TH1F("h_deeptag_matched", "deeptag for matched",100,-1,2)
-h_deeptag_unmatched = ROOT.TH1F("h_deeptag_unmatched", "deeptag for unmatched",100,-1,2)
-h_particlenet           = ROOT.TH1F("h_particlenet", "particlenet for all",100,-1,2)
-h_particlenet_matched   = ROOT.TH1F("h_particlenet_matched","particlenet for matched",100,-1,2)
-h_particlenet_unmatched = ROOT.TH1F("h_particlenet_unmatched","particlenet for unmatched",100,-1,2) 
-
-h_DTvsPN = ROOT.TH2F("h_DTvsPN","deeptag vs particlenet for all",100,-1,2,100,-1,2)
-h_DTvsPN_matched = ROOT.TH2F("h_DTvsPN_matched","deeptag vs particlenet for matched",100,-1,2,100,-1,2)
-h_DTvsPN_unmatched = ROOT.TH2F("h_DTvsPN_unmatched","deeptag vs particlenet for unmatched",100,-1,2,100,-1,2)
-
 # input file
 ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/NANOAOD/TRSM_XToHY_6b_M3_%i_M2_%i_NANOAOD.root" % (options.mX, options.mY)
 if options.massPoint:
     ifile = "/STORE/ferencek/TRSM_XToHY_6b/2017/13TeV/NANOAOD/TRSM_XToHY_6b_%s_NANOAOD.root" % options.massPoint
-
-# # single input file for testing
-# ifile = "./data/TRSM_XToHY_6b_M3_2800_M2_700_NANOAOD.root"
 
 # open root input file directly 
 evtFile = ROOT.TFile.Open(ifile)
@@ -237,8 +234,6 @@ for i,e in enumerate(events):
     jetVec = ROOT.TLorentzVector()
     hVec   = ROOT.TLorentzVector()
 
-    #print(higgsList)
-
     for j in range(e.nFatJet):
         isMatched = False
         h_jetmass.Fill(e.FatJet_mass[j]*(1-e.FatJet_rawFactor[j]))
@@ -252,8 +247,6 @@ for i,e in enumerate(events):
             FatJet_particleNetMD_XbbvsQCD = -1
         else:
             FatJet_particleNetMD_XbbvsQCD = e.FatJet_particleNetMD_Xbb[j] / (e.FatJet_particleNetMD_Xbb[j] + e.FatJet_particleNetMD_QCD[j])
-
-        #print("all", e.FatJet_deepTagMD_HbbvsQCD[j]) # test
 
         h_deeptag.Fill(e.FatJet_deepTagMD_HbbvsQCD[j])
         h_particlenet.Fill(FatJet_particleNetMD_XbbvsQCD)
@@ -298,8 +291,6 @@ for i,e in enumerate(events):
 
                 h_msoftdrop_matched.Fill(e.FatJet_msoftdrop[j])
                 h_msoftdrop_vs_massjet_matched.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
-
-                #print("matched ",e.FatJet_deepTagMD_HbbvsQCD[j]) # test
 
                 h_deeptag_matched.Fill(e.FatJet_deepTagMD_HbbvsQCD[j])
                 h_particlenet_matched.Fill(FatJet_particleNetMD_XbbvsQCD)
@@ -349,8 +340,6 @@ for i,e in enumerate(events):
             h_msoftdrop_unmatched.Fill(e.FatJet_msoftdrop[j])
             h_msoftdrop_vs_massjet_unmatched.Fill(e.FatJet_mass[j],e.FatJet_msoftdrop[j])
             
-            #print("unmatched ", e.FatJet_deepTagMD_HbbvsQCD[j])
-
             h_deeptag_unmatched.Fill(e.FatJet_deepTagMD_HbbvsQCD[j])
             h_particlenet_unmatched.Fill(FatJet_particleNetMD_XbbvsQCD)
             h_DTvsPN_unmatched.Fill(e.FatJet_deepTagMD_HbbvsQCD[j],FatJet_particleNetMD_XbbvsQCD)
@@ -371,11 +360,6 @@ for i,e in enumerate(events):
                 if (e.FatJet_pt[j] > 250 and abs(e.FatJet_eta[j]) < 2 and e.FatJet_mass[j] > 100 and e.FatJet_mass[j] < 150 and FatJet_particleNetMD_XbbvsQCD > 0.9):
                     HCandsList_unmatched_particlenet.append(j)
 
-    # print(len(HCandsList_matched)+len(HCandsList_unmatched)-len(HCandsList))
-    # print(HCandsList_unmatched)
-    # print(HCandsList_matched)
-    # print(HCandsList)
-
     # level - fatjet
     h_HCands.Fill(len(HCandsList))
     h_HCands_matched.Fill(len(HCandsList_matched))
@@ -392,7 +376,5 @@ for i,e in enumerate(events):
     # level - generator
     h_HCands_GenPart.Fill(higgscount) 
     
-#print(nDaughters)
-
 f.Write()
 f.Close()
