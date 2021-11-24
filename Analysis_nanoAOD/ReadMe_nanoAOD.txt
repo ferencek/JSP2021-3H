@@ -1,4 +1,21 @@
-Analysis on nanoAOD files using FatJet
+Higgs triplet analysis HOW-TO
+#################
+
+1. python submitAnalysisJobs.py -o condor_nanoAOD_[mjet/msoftdrop] -s higgsTripletAnalysis_nanoAOD.py [--msoftdrop]
+
+    -submits jobs to condor to run analysis on all mass points and creates a folder with output histograms
+    -run once for jet mass, once for soft drop mass (using respective options)
+
+2. wait
+
+3. python makePlots.py --omjet condor_nanoAOD_mjet_TIMESTAMP --omsoftdrop condor_nanoAOD_msoftdrop_TIMESTAMP 
+
+    -uses analysis output from both jet mass and soft drop mass to create plots 
+
+
+#################
+Everything
+#################
 
 # To print out decay kinematics
 python XtoYHto3H_decay.py --mX 3000 --mY 3000
