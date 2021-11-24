@@ -290,12 +290,12 @@ for mX in range(mX_min, mX_max + mX_step, mX_step):
     for mY in sorted(list(set([260,mX-140])) + range(300, mX-125, mY_step)):
         # values.write('{:>3d}  {:>4d}  {:>4d}'.format(n+1, mX, mY))
 
-        readHist = "/users/ldulibic/nanoAODhiggs/Analysis_nanoAOD/"+options.condor_outputMjet+"/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i_FatJet.root" % (mX,mY)
+        readHist = "/users/ldulibic/nanoAODhiggs/nanoAODanalysis/"+options.condor_outputMjet+"/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i_FatJet.root" % (mX,mY)
         if options.withNu:
             readHist = readHist.replace(".root", "_WithNu.root")
         f = r.TFile(readHist)
 
-        readHist = "/users/ldulibic/nanoAODhiggs/Analysis_nanoAOD/"+options.condor_outputMsoftdrop+"/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i_FatJet_msoftdrop.root" % (mX,mY)
+        readHist = "/users/ldulibic/nanoAODhiggs/nanoAODanalysis/"+options.condor_outputMsoftdrop+"/nanoAOD_HISTOGRAMS_TRSM_XToHY_6b_M3_%i_M2_%i_FatJet_msoftdrop.root" % (mX,mY)
         if options.withNu:
             readHist = readHist.replace(".root", "_WithNu.root")
         g = r.TFile(readHist)
