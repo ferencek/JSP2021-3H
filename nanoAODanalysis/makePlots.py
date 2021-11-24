@@ -543,7 +543,7 @@ except OSError as error:
     pass
 
 # make plots
-plot(gr_GenPart, [], "./Yfigs/figsMjet/BoostedYFraction_GenPart.pdf")
+plot(gr_GenPart, [], "./Yfigs/figsMjet/BoostedHiggsFraction_GenPart.pdf")
 plot(gr_FatJet, [], "./Yfigs/figsMjet/BoostedYFraction_FatJet.pdf")
 plot(gr_FatJetMatched,[],"./Yfigs/figsMjet/BoostedYFraction_FatJet_matched.pdf")
 plot(gr_FatJetUnmatched,[],"./Yfigs/figsMjet/BoostedYFraction_FatJet_unmatched.pdf")
@@ -554,7 +554,7 @@ plot(gr_FatJetParticleNet, [], "./Yfigs/figsMjet/BoostedYFraction_FatJet_Particl
 plot(gr_FatJetMatchedParticleNet,[],"./Yfigs/figsMjet/BoostedYFraction_FatJet_ParticleNet_matched.pdf")
 plot(gr_FatJetUnmatchedParticleNet,[],"./Yfigs/figsMjet/BoostedYFraction_FatJet_ParticleNet_unmatched.pdf")
 
-plot(gr_GenPart_msd, [], "./Yfigs/figsMsoftdrop/BoostedYFraction_GenPart_msoftdrop.pdf")
+plot(gr_GenPart_msd, [], "./Yfigs/figsMsoftdrop/BoostedHiggsFraction_GenPart_msoftdrop.pdf")
 plot(gr_FatJet_msd, [], "./Yfigs/figsMsoftdrop/BoostedYFraction_FatJet_msoftdrop.pdf")
 plot(gr_FatJetMatched_msd,[],"./Yfigs/figsMsoftdrop/BoostedYFraction_FatJet_matched_msoftdrop.pdf")
 plot(gr_FatJetUnmatched_msd,[],"./Yfigs/figsMsoftdrop/BoostedYFraction_FatJet_unmatched_msoftdrop.pdf")
